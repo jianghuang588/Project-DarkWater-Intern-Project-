@@ -1,42 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
-  <title>Register</title>
+  <meta charset="UTF-8">
+  <title>$Title$</title>
 </head>
 <body>
-<h2>Register</h2>
-
-<form action="/register" method="post" onsubmit="return validateForm()">
-  Username: <input type="text" name="username" required><br><br>
-  Password: <input type="password" id="password" name="password" required><br><br>
-  Confirm Password: <input type="password" id="confirmPassword" name="confirmPassword" required><br><br>
-  <button type="submit">Register</button>
-</form>
-<br>
-<a href="/login">Already have an account? Login</a>
-
-<script>
-  function validateForm() {
-    var password = document.getElementById("password").value;
-    var confirmPassword = document.getElementById("confirmPassword").value;
-
-    if (password !== confirmPassword) {
-      alert("Passwords don't match!");
-      return false;
-    }
-    return true;
-  }
-</script>
-
-<script th:inline="javascript">
-  /*<![CDATA[*/
-  var error = [[${param.error}]];
-  if (error) {
-    if (error[0] === 'exists') {
-      alert('Username already exists!');
-    }
-  }
-  /*]]>*/
-</script>
+$END$
 </body>
 </html>
