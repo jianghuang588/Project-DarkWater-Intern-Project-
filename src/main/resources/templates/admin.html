@@ -1,10 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+  <title>Admin Dashboard</title>
 </head>
 <body>
-$END$
+<h2>Admin Dashboard</h2>
+<p>Welcome Admin: <span th:text="${username}"></span></p>
+
+<h3>Quick Stats</h3>
+<ul>
+  <li>Total Users: <span id="totalUsers">Loading...</span></li>
+  <li>Active Users: <span id="activeUsers">Loading...</span></li>
+  <li>Pending Verifications: <span id="pendingUsers">Loading...</span></li>
+</ul>
+
+<h3>Admin Actions</h3>
+<ul>
+  <li><a href="/admin/users">Manage Users</a></li>
+  <li><a href="/admin/roles">Manage Roles</a></li>
+  <li><a href="/admin/logs">View Activity Logs</a></li>
+</ul>
+
+<br>
+<a href="/home">Back to Home</a><br>
+<a href="/logout">Logout</a>
+
+<script>
+  // These would be AJAX calls to your API
+  document.getElementById('totalUsers').innerText = 'API not connected';
+  document.getElementById('activeUsers').innerText = 'API not connected';
+  document.getElementById('pendingUsers').innerText = 'API not connected';
+</script>
 </body>
 </html>

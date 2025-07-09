@@ -1,10 +1,319 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+  <title>Edit Profile</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+      pointer-events: none;
+    }
+
+    form {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      backdrop-filter: blur(10px);
+      animation: slideUp 0.5s ease-out;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 30px;
+      font-size: 32px;
+      font-weight: 600;
+      text-align: center;
+      position: relative;
+    }
+
+    h2::before {
+      content: '✏️';
+      display: block;
+      font-size: 48px;
+      margin-bottom: 10px;
+      filter: grayscale(0.2);
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
+
+    div[style*="color: red"] {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24 !important;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      animation: shake 0.5s ease-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    h3 {
+      color: #666;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 25px 0 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h3:first-of-type {
+      margin-top: 0;
+    }
+
+    h3:first-of-type::before {
+      content: '📋';
+      font-size: 20px;
+    }
+
+    h3:last-of-type::before {
+      content: '🔄';
+      font-size: 20px;
+    }
+
+    p {
+      background: #f8f8f8;
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      color: #555;
+      font-size: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #e9ecef;
+    }
+
+    p strong {
+      color: #333;
+      font-weight: 600;
+    }
+
+    hr {
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #e0e0e0, transparent);
+      margin: 25px 0;
+    }
+
+    label {
+      display: block;
+      color: #555;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      padding: 15px 20px;
+      border: 2px solid #e1e1e1;
+      border-radius: 12px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: #f8f8f8;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+    }
+
+    input[type="text"]::placeholder,
+    input[type="email"]::placeholder {
+      color: #999;
+      font-size: 14px;
+    }
+
+    small {
+      display: block;
+      color: #888;
+      font-size: 13px;
+      margin-top: 5px;
+      margin-bottom: 20px;
+      padding-left: 5px;
+    }
+
+    button[type="submit"] {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 16px 40px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    button[type="submit"]::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transition: left 0.5s ease;
+    }
+
+    button[type="submit"]:hover::before {
+      left: 100%;
+    }
+
+    button[type="submit"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    button[type="submit"]:active {
+      transform: translateY(0);
+    }
+
+    a[href="/profile"] {
+      display: inline-block;
+      padding: 16px 40px;
+      color: #666;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+      border: 2px solid #e1e1e1;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      background: white;
+      margin-left: 10px;
+    }
+
+    a[href="/profile"]:hover {
+      border-color: #999;
+      background: #f8f8f8;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Form validation styles */
+    input:valid {
+      border-color: #e1e1e1;
+    }
+
+    input:invalid:not(:focus):not(:placeholder-shown) {
+      border-color: #e74c3c;
+      background-color: #fff5f5;
+    }
+
+    /* Responsive design */
+    @media (max-width: 480px) {
+      form {
+        padding: 30px 25px;
+      }
+
+      h2 {
+        font-size: 28px;
+      }
+
+      button[type="submit"],
+      a[href="/profile"] {
+        width: 100%;
+        margin: 10px 0 0 0;
+        text-align: center;
+      }
+    }
+  </style>
 </head>
 <body>
-$END$
+<form action="/profile/edit" method="post">
+  <h2>Edit Profile</h2>
+
+  <div th:if="${param.error}" style="color: red;">
+    Error: <span th:text="${param.error}"></span>
+  </div>
+
+  <h3>Current Information</h3>
+  <p>Username: <strong><span th:text="${user.username}"></span></strong></p>
+  <p>Email: <strong><span th:text="${user.email}"></span></strong></p>
+
+  <hr>
+
+  <h3>Update Information</h3>
+  <label for="newUsername">New Username:</label><br>
+  <input type="text" id="newUsername" name="newUsername" th:value="${user.username}"
+         pattern="[a-zA-Z0-9_]{3,20}"
+         title="3-20 characters, letters, numbers and underscore only"
+         required><br>
+  <small>3-20 characters, letters, numbers and underscore only</small><br><br>
+
+  <label for="newEmail">New Email:</label><br>
+  <input type="email" id="newEmail" name="newEmail" th:value="${user.email}"
+         placeholder="your@gmail.com"
+         required><br>
+  <small>Gmail addresses only</small><br><br>
+
+  <button type="submit">Update Profile</button>
+  <a href="/profile" style="margin-left: 10px;">Cancel</a>
+</form>
 </body>
 </html>

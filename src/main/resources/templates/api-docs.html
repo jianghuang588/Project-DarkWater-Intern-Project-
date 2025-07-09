@@ -1,10 +1,336 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <title>API Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            pointer-events: none;
+        }
+
+        h1 {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            margin: 0 auto 30px;
+            text-align: center;
+            color: #333;
+            font-size: 36px;
+            font-weight: 700;
+            backdrop-filter: blur(10px);
+            animation: fadeInDown 0.5s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1::before {
+            content: '📚';
+            display: block;
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 40px;
+            border-radius: 20px 20px 0 0;
+            max-width: 1000px;
+            margin: 30px auto 0;
+            color: #333;
+            font-size: 24px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2:nth-of-type(1) {
+            animation: slideUp 0.5s ease-out 0.1s both;
+        }
+
+        h2:nth-of-type(2) {
+            animation: slideUp 0.5s ease-out 0.2s both;
+        }
+
+        h2:nth-of-type(3) {
+            animation: slideUp 0.5s ease-out 0.3s both;
+        }
+
+        h2:nth-of-type(4) {
+            animation: slideUp 0.5s ease-out 0.4s both;
+        }
+
+        h2:nth-of-type(5) {
+            animation: slideUp 0.5s ease-out 0.5s both;
+        }
+
+        h2:nth-of-type(6) {
+            animation: slideUp 0.5s ease-out 0.6s both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Icons for each section */
+        h2:nth-of-type(1)::before { content: '🔗'; }
+        h2:nth-of-type(2)::before { content: '🔐'; }
+        h2:nth-of-type(3)::before { content: '👤'; }
+        h2:nth-of-type(4)::before { content: '👨‍💼'; }
+        h2:nth-of-type(5)::before { content: '🎫'; }
+        h2:nth-of-type(6)::before { content: '🔑'; }
+
+        p, ul {
+            background: rgba(255, 255, 255, 0.95);
+            max-width: 1000px;
+            margin: 0 auto;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+        }
+
+        p {
+            padding: 20px 40px;
+            color: #555;
+            font-size: 16px;
+        }
+
+        p + ul, h2 + ul {
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        h2 + p + code {
+            display: block;
+            background: rgba(255, 255, 255, 0.95);
+            max-width: 1000px;
+            margin: -30px auto 30px;
+            padding: 20px 40px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        code {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            color: #667eea;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0 40px 30px;
+        }
+
+        li {
+            padding: 15px 20px;
+            margin: 10px 0;
+            background: #f8f8f8;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        li::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            transition: left 0.5s ease;
+            z-index: -1;
+        }
+
+        li:hover::before {
+            left: 0;
+        }
+
+        li:hover {
+            transform: translateX(5px);
+            border-left-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        li strong {
+            color: #667eea;
+            font-weight: 600;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            display: inline-block;
+            min-width: 300px;
+        }
+
+        a[href="/home"] {
+            display: inline-block;
+            padding: 16px 40px;
+            margin: 40px auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+            color: #667eea;
+            border: 2px solid #667eea;
+            display: block;
+            width: fit-content;
+            text-align: center;
+        }
+
+        a[href="/home"]::before {
+            content: '🏠 ';
+            font-size: 18px;
+        }
+
+        a[href="/home"]:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 28px;
+                padding: 25px 30px;
+            }
+
+            h2 {
+                font-size: 20px;
+                padding: 15px 30px;
+            }
+
+            p, ul {
+                padding: 15px 30px;
+            }
+
+            li {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+
+            li strong {
+                min-width: auto;
+                display: block;
+                margin-bottom: 5px;
+            }
+        }
+    </style>
 </head>
 <body>
-$END$
+<h1>User Management API Documentation</h1>
+
+<h2>Base URL</h2>
+<p><code>http://localhost:8080/api</code></p>
+
+<h2>Authentication Endpoints</h2>
+<ul>
+    <li><strong>POST /api/auth/register</strong> - Register new user</li>
+    <li><strong>POST /api/auth/login</strong> - Login and get JWT token</li>
+    <li><strong>GET /api/auth/validate</strong> - Validate JWT token</li>
+    <li><strong>GET /api/auth/verify?token={token}</strong> - Verify email</li>
+    <li><strong>POST /api/auth/forgot-password</strong> - Request password reset</li>
+    <li><strong>POST /api/auth/reset-password</strong> - Reset password</li>
+</ul>
+
+<h2>User Endpoints (Requires Authentication)</h2>
+<ul>
+    <li><strong>GET /api/users/profile</strong> - Get current user profile</li>
+    <li><strong>PUT /api/users/profile</strong> - Update profile</li>
+    <li><strong>POST /api/users/change-password</strong> - Change password</li>
+</ul>
+
+<h2>Admin Endpoints (Requires Admin Role)</h2>
+<ul>
+    <li><strong>GET /api/admin/users</strong> - List all users</li>
+    <li><strong>GET /api/admin/users/{id}</strong> - Get user by ID</li>
+    <li><strong>PUT /api/admin/users/{id}/status</strong> - Update user status</li>
+    <li><strong>PUT /api/admin/users/{id}/role</strong> - Update user role</li>
+    <li><strong>DELETE /api/admin/users/{id}</strong> - Delete user</li>
+</ul>
+
+<h2>Support Ticket Endpoints</h2>
+<ul>
+    <li><strong>POST /api/support/tickets</strong> - Create ticket</li>
+    <li><strong>GET /api/support/tickets</strong> - Get user's tickets</li>
+    <li><strong>GET /api/support/tickets/{id}</strong> - Get specific ticket</li>
+    <li><strong>PUT /api/support/tickets/{id}</strong> - Update ticket</li>
+</ul>
+
+<h2>Authentication</h2>
+<p>For protected endpoints, include the JWT token in the Authorization header:</p>
+<code>Authorization: Bearer YOUR_JWT_TOKEN</code>
+
+<br><br>
+<a href="/home">Back to Home</a>
 </body>
 </html>

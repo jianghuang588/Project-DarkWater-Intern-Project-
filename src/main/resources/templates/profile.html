@@ -1,10 +1,356 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <title>User Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            pointer-events: none;
+        }
+
+        h2 {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto 30px;
+            text-align: center;
+            color: #333;
+            font-size: 32px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            animation: fadeInDown 0.5s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        div[style*="color: green"] {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724 !important;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin: 0 auto 20px;
+            max-width: 600px;
+            font-weight: 500;
+            text-align: center;
+            animation: slideIn 0.5s ease-out;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.1);
+        }
+
+        div[style*="color: green"]::before {
+            content: '✓ ';
+            font-size: 18px;
+            margin-right: 5px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        h3 {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 40px;
+            border-radius: 20px 20px 0 0;
+            max-width: 600px;
+            margin: 30px auto 0;
+            color: #333;
+            font-size: 22px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+        }
+
+        h3:first-of-type {
+            animation: slideUp 0.5s ease-out 0.2s both;
+        }
+
+        h3:last-of-type {
+            margin-top: 30px;
+            animation: slideUp 0.5s ease-out 0.4s both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Profile information section */
+        h3:first-of-type + p {
+            background: rgba(255, 255, 255, 0.95);
+            margin: 0 auto;
+            max-width: 600px;
+            padding: 0 40px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+        }
+
+        p {
+            background: rgba(255, 255, 255, 0.95);
+            margin: 0 auto;
+            max-width: 600px;
+            padding: 15px 40px;
+            color: #555;
+            font-size: 16px;
+            line-height: 1.6;
+            border-bottom: 1px solid #f0f0f0;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+        }
+
+        p:nth-of-type(6) {
+            border-radius: 0 0 20px 20px;
+            border-bottom: none;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        p span {
+            font-weight: 600;
+            color: #333;
+            float: right;
+        }
+
+        p span[th\:text*="ADMIN"] {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        ul {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0 40px 30px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+            list-style: none;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+        }
+
+        li {
+            margin: 10px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        li a {
+            display: block;
+            padding: 18px 25px;
+            background: #f8f8f8;
+            border-radius: 12px;
+            color: #333;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        li a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            transition: left 0.5s ease;
+            z-index: -1;
+        }
+
+        li a:hover::before {
+            left: 0;
+        }
+
+        li a:hover {
+            transform: translateX(10px);
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        li a::after {
+            content: '→';
+            position: absolute;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        li a:hover::after {
+            opacity: 1;
+            right: 20px;
+        }
+
+        a[href="/home"], a[href="/logout"] {
+            display: inline-block;
+            padding: 14px 30px;
+            margin: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+        }
+
+        a[href="/home"] {
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        a[href="/home"]:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        a[href="/logout"] {
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+        }
+
+        a[href="/logout"]:hover {
+            background: #e74c3c;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(231, 76, 60, 0.3);
+        }
+
+        /* Center the bottom links */
+        body > br {
+            display: none;
+        }
+
+        body > a {
+            display: inline-block;
+            text-align: center;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            h2 {
+                font-size: 28px;
+                padding: 25px 30px;
+            }
+
+            h3 {
+                font-size: 20px;
+                padding: 15px 30px;
+            }
+
+            p {
+                padding: 12px 30px;
+                font-size: 15px;
+            }
+
+            ul {
+                padding: 0 30px 25px;
+            }
+
+            li a {
+                padding: 15px 20px;
+                font-size: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-$END$
+<h2>User Profile</h2>
+
+<div th:if="${param.success}" style="color: green;">
+    Profile updated successfully!
+</div>
+<div th:if="${param.passwordChanged}" style="color: green;">
+    Password changed successfully!
+</div>
+
+<h3>Profile Information</h3>
+<p>Username: <span th:text="${user?.username ?: 'Not set'}"></span></p>
+<p>Email: <span th:text="${user?.email ?: 'Not set'}"></span></p>
+<p>Role: <span th:text="${user?.role ?: 'USER'}"></span></p>
+<p>Account Status: <span th:text="${user?.status ?: 'ACTIVE'}"></span></p>
+<p>Email Verified: <span th:text="${user?.emailVerified ?: 'No'}"></span></p>
+<p>Member Since: <span th:text="${user?.createdAt ?: 'Unknown'}"></span></p>
+
+<h3>Actions</h3>
+<ul>
+    <li><a href="/profile/edit">Edit Profile</a></li>
+    <li><a href="/profile/change-password">Change Password</a></li>
+</ul>
+
+<br>
+<a href="/home">Back to Home</a><br>
+<a href="/logout">Logout</a>
 </body>
 </html>

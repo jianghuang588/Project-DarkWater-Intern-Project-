@@ -1,10 +1,338 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <title>Register</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            pointer-events: none;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 32px;
+            font-weight: 600;
+            text-align: center;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        form {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.5s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        form::before {
+            content: 'Create Your Account';
+            display: block;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 15px 20px;
+            margin-top: 8px;
+            border: 2px solid #e1e1e1;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f8f8;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        input[type="text"]::placeholder,
+        input[type="email"]::placeholder,
+        input[type="password"]::placeholder {
+            color: #999;
+            font-size: 14px;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 16px;
+            margin-top: 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button[type="submit"]::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s ease;
+        }
+
+        button[type="submit"]:hover::before {
+            left: 100%;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(0);
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #667eea;
+            transition: width 0.3s ease;
+        }
+
+        a:hover {
+            color: #764ba2;
+        }
+
+        a:hover::after {
+            width: 100%;
+        }
+
+        /* Custom styled alert */
+        .alert-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .alert-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .alert-box {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+            text-align: center;
+        }
+
+        .alert-overlay.show .alert-box {
+            transform: scale(1);
+        }
+
+        .alert-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            background: #fee;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: #e74c3c;
+        }
+
+        .alert-message {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .alert-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Responsive design */
+        @media (max-width: 480px) {
+            form {
+                padding: 30px 25px;
+            }
+
+            h2 {
+                font-size: 28px;
+            }
+
+            button[type="submit"] {
+                padding: 14px;
+                font-size: 16px;
+            }
+        }
+    </style>
 </head>
 <body>
-$END$
+<form action="/register" method="post">
+    <h2>Register</h2>
+
+    Username: <input type="text" name="username" placeholder="john123" required><br><br>
+    Email: <input type="email" name="email" placeholder="your@gmail.com" required><br><br>
+    Password: <input type="password" name="password" placeholder="••••••••" required><br><br>
+    Confirm Password: <input type="password" name="confirmPassword" placeholder="••••••••" required><br><br>
+    <button type="submit">Register</button>
+
+    <br>
+    <a href="/login">Already have an account? Login</a>
+</form>
+
+<!-- Custom Alert Modal -->
+<div id="alertOverlay" class="alert-overlay">
+    <div class="alert-box">
+        <div class="alert-icon">⚠️</div>
+        <div id="alertMessage" class="alert-message"></div>
+        <button class="alert-button" onclick="closeAlert()">OK</button>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    var error = [[${param.error}]];
+    if (error) {
+        if (error[0] === 'exists') {
+            alert('Username or email already exists!');
+        } else if (error[0] === 'password') {
+            alert('Passwords do not match!');
+        } else if (error[0] === 'email') {
+            alert('Please enter a valid email address!');
+        } else if (error[0] === 'gmail') {
+            alert('Only Gmail addresses are allowed!');
+        }
+    }
+</script>
+
+<script>
+    // Override native alert with custom styled alert
+    window.alert = function(message) {
+        document.getElementById('alertMessage').textContent = message;
+        document.getElementById('alertOverlay').classList.add('show');
+    }
+
+    function closeAlert() {
+        document.getElementById('alertOverlay').classList.remove('show');
+    }
+
+    // Close alert on overlay click
+    document.getElementById('alertOverlay').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeAlert();
+        }
+    });
+</script>
 </body>
 </html>

@@ -1,14 +1,42 @@
-package com.example.demo.user;
-
+package com.example.demo.dto;
 
 import java.time.LocalDateTime;
 
+/**
+ * Data Transfer Object for activity logs
+ * Used to track and audit user actions in the system
+ * Typically displayed in admin dashboards for security monitoring
+ */
 public class ActivityLogDto {
+    /**
+     * Unique identifier for the log entry
+     */
     private Long id;
+
+    /**
+     * Username of the user who performed the action
+     */
     private String username;
+
+    /**
+     * Type of action performed (e.g., "LOGIN", "LOGOUT", "PASSWORD_CHANGE", "PROFILE_UPDATE")
+     */
     private String action;
+
+    /**
+     * Additional context about the action (e.g., "Failed login attempt", "Changed email to xxx@gmail.com")
+     */
     private String details;
+
+    /**
+     * IP address from which the action was performed
+     * Used for security tracking and suspicious activity detection
+     */
     private String ipAddress;
+
+    /**
+     * When the action occurred
+     */
     private LocalDateTime timestamp;
 
     // Getters and Setters
