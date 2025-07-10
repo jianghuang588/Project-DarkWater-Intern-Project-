@@ -169,13 +169,19 @@
       background: #f8f8f8;
     }
 
-    input[type="text"]:focus,
+    input[type="text"]:focus:not([readonly]),
     input[type="email"]:focus {
       outline: none;
       border-color: #667eea;
       background: white;
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+    }
+
+    input[readonly] {
+      background: #e9ecef;
+      cursor: not-allowed;
+      color: #6c757d;
     }
 
     input[type="text"]::placeholder,
@@ -299,12 +305,12 @@
   <hr>
 
   <h3>Update Information</h3>
-  <label for="newUsername">New Username:</label><br>
+  <label for="newUsername">Username:</label><br>
   <input type="text" id="newUsername" name="newUsername" th:value="${user.username}"
          pattern="[a-zA-Z0-9_]{3,20}"
-         title="3-20 characters, letters, numbers and underscore only"
-         required><br>
-  <small>3-20 characters, letters, numbers and underscore only</small><br><br>
+         title="Username cannot be changed"
+         readonly><br>
+  <small style="color: #666;">Username cannot be changed for moderation purposes</small><br><br>
 
   <label for="newEmail">New Email:</label><br>
   <input type="email" id="newEmail" name="newEmail" th:value="${user.email}"

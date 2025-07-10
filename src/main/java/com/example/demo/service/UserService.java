@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.Optional;
 
@@ -137,45 +138,32 @@ public class UserService {
         userRepository.save(user);
     }
 
-    // Update user profile
+    // Update user profile - MODIFIED TO PREVENT USERNAME CHANGES
     @Transactional
     public UserResponseDto updateProfile(String currentUsername, UpdateProfileDto dto) {
         User user = userRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        String newUsername = dto.getUsername();
         String newEmail = dto.getEmail();
 
-        // Check if new username taken by someone else
-        if (!newUsername.equals(currentUsername)) {
-            Optional<User> existingUser = userRepository.findByUsername(newUsername);
-            if (existingUser.isPresent() && !existingUser.get().getId().equals(user.getId())) {
-                throw new RuntimeException("Username already exists");
-            }
-        }
-
+        // Only update email, not username
         // Check if new email taken by someone else
         if (!newEmail.equals(user.getEmail())) {
             Optional<User> existingUser = userRepository.findByEmail(newEmail);
             if (existingUser.isPresent() && !existingUser.get().getId().equals(user.getId())) {
                 throw new RuntimeException("Email already exists");
             }
-        }
 
-        // Update username and email
-        user.setUsername(newUsername);
-        user.setEmail(newEmail);
+            // Update email
+            user.setEmail(newEmail);
 
-        User savedUser = userRepository.save(user);
-
-        // Send verification if email changed
-        if (!newEmail.equals(user.getEmail())) {
+            // Send verification if email changed
             user.setEmailVerified(false);
             user.setVerificationToken(UUID.randomUUID().toString());
-            userRepository.save(user);
             emailService.sendVerificationEmail(user.getEmail(), user.getVerificationToken());
         }
 
+        User savedUser = userRepository.save(user);
         return convertToDto(savedUser);
     }
 
@@ -288,7 +276,7 @@ public class UserService {
         return user.getRole() == UserRole.ADMIN || user.getRole() == UserRole.SUPER_ADMIN;
     }
 
-    // Convert User to DTO (hide sensitive data)
+    // Convert User to DTO (hide sensitive data) - UPDATED WITH DATE FORMATTING
     private UserResponseDto convertToDto(User user) {
         UserResponseDto dto = new UserResponseDto();
         dto.setId(user.getId());
@@ -299,6 +287,13 @@ public class UserService {
         dto.setEmailVerified(user.isEmailVerified());
         dto.setCreatedAt(user.getCreatedAt());
         dto.setLastLogin(user.getLastLogin());
+
+        // Format the creation date
+        if (user.getCreatedAt() != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy @ h:mm a 'EST'");
+            dto.setFormattedCreatedAt(formatter.format(user.getCreatedAt()));
+        }
+
         return dto;
     }
 }

@@ -61,6 +61,12 @@ public class UserResponseDto {
      */
     private LocalDateTime lastLogin;
 
+    /**
+     * Formatted creation date for display
+     * Example: "July 9, 2025 @ 5:47 PM EST"
+     */
+    private String formattedCreatedAt;
+
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -85,4 +91,9 @@ public class UserResponseDto {
 
     public LocalDateTime getLastLogin() { return lastLogin; }
     public void setLastLogin(LocalDateTime lastLogin) { this.lastLogin = lastLogin; }
+
+    public String getFormattedCreatedAt() { return formattedCreatedAt; }
+    public void setFormattedCreatedAt(String formattedCreatedAt) {
+        this.formattedCreatedAt = formattedCreatedAt;
+    }
 }

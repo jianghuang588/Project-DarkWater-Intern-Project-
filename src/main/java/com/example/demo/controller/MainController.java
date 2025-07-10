@@ -239,10 +239,6 @@ public class MainController {
         return "edit-profile";
     }
 
-    /**
-     * Update user profile - validates new username/email
-     * Updates session if username changes
-     */
     @PostMapping("/profile/edit")
     public String updateProfile(@RequestParam String newUsername,
                                 @RequestParam String newEmail,
@@ -262,28 +258,22 @@ public class MainController {
             return "redirect:/profile/edit?error=Only Gmail addresses allowed";
         }
 
-        // Username validation
-        if (!newUsername.matches("^[a-zA-Z0-9_]{3,20}$")) {
-            return "redirect:/profile/edit?error=Invalid username format";
-        }
-
         try {
             UpdateProfileDto dto = new UpdateProfileDto();
-            dto.setUsername(newUsername);
+            // Keep the same username - don't allow changes
+            dto.setUsername(currentUsername);
             dto.setEmail(newEmail);
 
             userService.updateProfile(currentUsername, dto);
-
-            // Update session if username changed
-            if (!currentUsername.equals(newUsername)) {
-                session.setAttribute("username", newUsername);
-            }
 
             return "redirect:/profile?success=true";
         } catch (Exception e) {
             return "redirect:/profile/edit?error=" + e.getMessage();
         }
     }
+
+
+
 
     /**
      * Change password page
