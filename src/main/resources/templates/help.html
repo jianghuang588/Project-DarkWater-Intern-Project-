@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Help Center - Project Darkwater</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Header */
+    .header {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      animation: slideDown 0.5s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      text-align: center;
+      margin-bottom: 80px;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-title {
+      font-size: 56px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-subtitle {
+      font-size: 22px;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+
+    /* Search Bar */
+    .search-container {
+      max-width: 600px;
+      margin: 0 auto 60px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 20px 60px 20px 25px;
+      border: none;
+      border-radius: 50px;
+      font-size: 18px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .search-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .search-btn:hover {
+      transform: translateY(-50%) scale(1.1);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 80px;
+      animation: staggerIn 1s ease-out 0.3s both;
+    }
+
+    @keyframes staggerIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .action-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      padding: 40px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      transition: all 0.4s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .action-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .action-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .action-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .action-description {
+      color: #666;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    /* Help Categories */
+    .help-categories {
+      margin-bottom: 80px;
+    }
+
+    .section-title {
+      font-size: 36px;
+      font-weight: 600;
+      color: white;
+      text-align: center;
+      margin-bottom: 50px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+    }
+
+    .category-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 35px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .category-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .category-icon {
+      font-size: 32px;
+      margin-right: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .category-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .help-links {
+      list-style: none;
+    }
+
+    .help-links li {
+      margin-bottom: 12px;
+    }
+
+    .help-links a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+    }
+
+    .help-links a:hover {
+      color: #5a6fd8;
+      transform: translateX(5px);
+    }
+
+    .help-links a::before {
+      content: '→';
+      margin-right: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .help-links a:hover::before {
+      transform: translateX(3px);
+    }
+
+    /* FAQ Section */
+    .faq-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      padding: 50px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      margin-bottom: 50px;
+    }
+
+    .faq-title {
+      font-size: 32px;
+      font-weight: 600;
+      color: #333;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid #e0e0e0;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+    }
+
+    .faq-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .faq-question {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .faq-question:hover {
+      color: #667eea;
+    }
+
+    .faq-question::after {
+      content: '+';
+      font-size: 24px;
+      font-weight: 300;
+      transition: all 0.3s ease;
+    }
+
+    .faq-question.active::after {
+      content: '−';
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      color: #666;
+      line-height: 1.6;
+      font-size: 16px;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .faq-answer.active {
+      max-height: 200px;
+      margin-top: 15px;
+    }
+
+    /* Contact Section */
+    .contact-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .contact-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 35px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .contact-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .contact-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .contact-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .contact-description {
+      color: #666;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    .contact-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px 30px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+
+    .contact-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+      text-decoration: none;
+      color: white;
+    }
+
+    /* Back Button */
+    .back-button {
+      position: fixed;
+      top: 100px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 12px 20px;
+      border-radius: 25px;
+      text-decoration: none;
+      color: #667eea;
+      font-weight: 600;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      background: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      text-decoration: none;
+      color: #667eea;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 42px;
+      }
+
+      .hero-subtitle {
+        font-size: 18px;
+      }
+
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .categories-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-section {
+        grid-template-columns: 1fr;
+      }
+
+      .faq-section {
+        padding: 30px 25px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .back-button {
+        top: auto;
+        bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Header -->
+<div class="header">
+  <div class="nav-container">
+    <a href="/home" class="logo">Project Darkwater</a>
+    <ul class="nav-links">
+      <li><a href="/home">Home</a></li>
+      <li><a href="/profile">Profile</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/logout">Logout</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <h1 class="hero-title">Help Center</h1>
+    <p class="hero-subtitle">
+      Navigate the depths with confidence. Find answers, learn the ropes,
+      and discover everything you need to master Project Darkwater.
+    </p>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-container">
+    <input type="text" class="search-input" placeholder="Search for help articles, guides, or tutorials...">
+    <button class="search-btn">🔍</button>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <a href="/faq" class="action-card">
+      <div class="action-icon">❓</div>
+      <h3 class="action-title">Frequently Asked Questions</h3>
+      <p class="action-description">Quick answers to the most common questions about Project Darkwater</p>
+    </a>
+
+    <a href="#getting-started" class="action-card">
+      <div class="action-icon">🚀</div>
+      <h3 class="action-title">Getting Started Guide</h3>
+      <p class="action-description">New to the depths? Start here for a comprehensive introduction</p>
+    </a>
+
+    <a href="#game-mechanics" class="action-card">
+      <div class="action-icon">⚙️</div>
+      <h3 class="action-title">Game Mechanics</h3>
+      <p class="action-description">Learn the core systems and mechanics that drive your underwater adventure</p>
+    </a>
+
+    <a href="#troubleshooting" class="action-card">
+      <div class="action-icon">🔧</div>
+      <h3 class="action-title">Troubleshooting</h3>
+      <p class="action-description">Having technical issues? Find solutions to common problems</p>
+    </a>
+  </div>
+
+  <!-- Help Categories -->
+  <div class="help-categories">
+    <h2 class="section-title">Browse Help Topics</h2>
+    <div class="categories-grid">
+      <div class="category-card" id="getting-started">
+        <div class="category-header">
+          <span class="category-icon">🌊</span>
+          <h3 class="category-title">Getting Started</h3>
+        </div>
+        <ul class="help-links">
+          <li><a href="#">Creating Your Account</a></li>
+          <li><a href="#">First Dive Tutorial</a></li>
+          <li><a href="#">Basic Controls & Navigation</a></li>
+          <li><a href="#">Understanding Your Equipment</a></li>
+          <li><a href="#">Safety Guidelines</a></li>
+        </ul>
+      </div>
+
+      <div class="category-card" id="game-mechanics">
+        <div class="category-header">
+          <span class="category-icon">🎮</span>
+          <h3 class="category-title">Game Mechanics</h3>
+        </div>
+        <ul class="help-links">
+          <li><a href="#">Exploration System</a></li>
+          <li><a href="#">Resource Collection</a></li>
+          <li><a href="#">Upgrade Paths</a></li>
+          <li><a href="#">Achievement System</a></li>
+          <li><a href="#">Multiplayer Features</a></li>
+        </ul>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header">
+          <span class="category-icon">👤</span>
+          <h3 class="category-title">Account & Profile</h3>
+        </div>
+        <ul class="help-links">
+          <li><a href="#">Managing Your Profile</a></li>
+          <li><a href="#">Changing Password</a></li>
+          <li><a href="#">Privacy Settings</a></li>
+          <li><a href="#">Account Recovery</a></li>
+          <li><a href="#">Data & Storage</a></li>
+        </ul>
+      </div>
+
+      <div class="category-card" id="troubleshooting">
+        <div class="category-header">
+          <span class="category-icon">⚠️</span>
+          <h3 class="category-title">Troubleshooting</h3>
+        </div>
+        <ul class="help-links">
+          <li><a href="#">Connection Issues</a></li>
+          <li><a href="#">Performance Problems</a></li>
+          <li><a href="#">Login Difficulties</a></li>
+          <li><a href="#">Browser Compatibility</a></li>
+          <li><a href="#">Report a Bug</a></li>
+        </ul>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header">
+          <span class="category-icon">🏆</span>
+          <h3 class="category-title">Advanced Tips</h3>
+        </div>
+        <ul class="help-links">
+          <li><a href="#">Mastering Deep Exploration</a></li>
+          <li><a href="#">Efficiency Strategies</a></li>
+          <li><a href="#">Hidden Features</a></li>
+          <li><a href="#">Community Best Practices</a></li>
+          <li><a href="#">Expert Techniques</a></li>
+        </ul>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header">
+          <span class="category-icon">🛡️</span>
+          <h3 class="category-title">Safety & Security</h3>
+        </div>
+        <ul class="help-links">
+          <li><a href="#">Account Security</a></li>
+          <li><a href="#">Two-Factor Authentication</a></li>
+          <li><a href="#">Reporting Issues</a></li>
+          <li><a href="#">Community Guidelines</a></li>
+          <li><a href="#">Privacy Protection</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick FAQ -->
+  <div class="faq-section">
+    <h2 class="faq-title">Quick Answers</h2>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        How do I start my first dive in Project Darkwater?
+      </div>
+      <div class="faq-answer">
+        After creating your account and completing the tutorial, head to the Launch Bay from your home dashboard. Select "Begin New Expedition" and choose your preferred difficulty level. Follow the guided dive sequence for your first underwater adventure.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        What should I do if I'm experiencing connection issues?
+      </div>
+      <div class="faq-answer">
+        First, check your internet connection and try refreshing the page. If issues persist, clear your browser cache and cookies. For continued problems, please contact our support team with details about your browser and operating system.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        How can I recover my account if I forgot my password?
+      </div>
+      <div class="faq-answer">
+        Visit the login page and click "Forgot Password." Enter your registered email address, and we'll send you a secure reset link. Follow the instructions in the email to create a new password and regain access to your account.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        Are there multiplayer features in Project Darkwater?
+      </div>
+      <div class="faq-answer">
+        Yes! Project Darkwater features collaborative exploration modes, shared discoveries, and community challenges. You can team up with other divers for joint expeditions and share your findings with the community.
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Section -->
+  <div class="contact-section">
+    <div class="contact-card">
+      <div class="contact-icon">💬</div>
+      <h3 class="contact-title">Live Chat Support</h3>
+      <p class="contact-description">
+        Get instant help from our support team. Available 24/7 for urgent issues.
+      </p>
+      <a href="#" class="contact-btn">Start Chat</a>
+    </div>
+
+    <div class="contact-card">
+      <div class="contact-icon">📧</div>
+      <h3 class="contact-title">Email Support</h3>
+      <p class="contact-description">
+        Send us a detailed message and we'll get back to you within 24 hours.
+      </p>
+      <a href="mailto:support@projectdarkwater.com" class="contact-btn">Send Email</a>
+    </div>
+
+    <div class="contact-card">
+      <div class="contact-icon">📚</div>
+      <h3 class="contact-title">Documentation</h3>
+      <p class="contact-description">
+        Explore our comprehensive guides and technical documentation.
+      </p>
+      <a href="/api-docs" class="contact-btn">View Docs</a>
+    </div>
+  </div>
+</div>
+
+<!-- Back Button -->
+<a href="javascript:history.back()" class="back-button">← Go Back</a>
+
+<script>
+  // Search functionality
+  document.querySelector('.search-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      searchHelp();
+    }
+  });
+
+  document.querySelector('.search-btn').addEventListener('click', searchHelp);
+
+  function searchHelp() {
+    const query = document.querySelector('.search-input').value;
+    if (query.trim()) {
+      // Here you would implement actual search functionality
+      alert('Searching for: ' + query);
+      // window.location.href = '/help/search?q=' + encodeURIComponent(query);
+    }
+  }
+
+  // FAQ toggle functionality
+  function toggleFaq(element) {
+    const answer = element.nextElementSibling;
+    const isActive = element.classList.contains('active');
+
+    // Close all other FAQs
+    document.querySelectorAll('.faq-question').forEach(q => {
+      q.classList.remove('active');
+      q.nextElementSibling.classList.remove('active');
+    });
+
+    // Toggle current FAQ
+    if (!isActive) {
+      element.classList.add('active');
+      answer.classList.add('active');
+    }
+  }
+
+  // Smooth scrolling for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+
+  // Animation on scroll
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, observerOptions);
+
+  // Observe all cards for animation
+  document.querySelectorAll('.action-card, .category-card, .contact-card').forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(card);
+  });
+
+  // Live chat simulation
+  document.querySelector('.contact-card .contact-btn').addEventListener('click', function(e) {
+    if (this.textContent === 'Start Chat') {
+      e.preventDefault();
+      alert('Live chat feature coming soon! For now, please use email support.');
+    }
+  });
+</script>
+</body>
+</html>

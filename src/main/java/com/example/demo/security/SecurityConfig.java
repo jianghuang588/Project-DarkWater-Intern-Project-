@@ -34,21 +34,98 @@ public class SecurityConfig {
                 // Enable CORS
                 .cors(cors -> cors.and())
 
-                // Don't create sessions (stateless)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // FIXED: Use STATEFUL sessions for web pages, STATELESS for API
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
 
                 // Who can access what
                 .authorizeHttpRequests(authz -> authz
+                        // Public web pages (no authentication required)
+                        .requestMatchers(
+                                "/",
+                                "/home",
+                                "/about",              // About Project Darkwater page
+                                "/faq",                // FAQ page
+                                "/roadmap",            // Interactive Roadmap page
+                                "/news",               // News (Blog-post style) page
+                                "/release-notes",      // Release Notes page
+                                "/apply",              // Apply to join the crew page
+                                "/staff",              // Staff panel (protected by controller logic)
+                                "/help",               // Help page
+                                "/play",               // Play/Download page
+                                "/login",              // Login page
+                                "/register",           // Registration page
+                                "/verify",             // Email verification page
+                                "/forgot-password",    // Forgot password page
+                                "/reset-password",     // Reset password page
+                                "/splash",             // Splash screen page
+                                "/email-verified",     // Email verification success page
+                                "/error",              // Error page
+                                "/check-session"       // Debug endpoint
+                        ).permitAll()
+
+                        // Static resources
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/static/**").permitAll()
+
+                        // FIXED: Allow these web pages but let controller handle auth
+                        .requestMatchers("/profile", "/profile/**", "/settings", "/content").permitAll()
+
+                        // Admin web pages - let controller handle auth
+                        .requestMatchers("/admin/**").permitAll()
+
+                        // API endpoints - These use JWT
                         .requestMatchers("/api/auth/**").permitAll()                    // Anyone can login/register
-                        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")  // Admins only
+
+                        // News API endpoints - Public access for reading
+                        .requestMatchers("/api/news/carousel").permitAll()              // Public news carousel
+                        .requestMatchers("/api/news/latest-patch").permitAll()          // Public patch notes
+                        .requestMatchers("/api/news/published/**").permitAll()          // Public published posts
+                        .requestMatchers("/api/news/{id:[0-9]+}").permitAll()           // Public single post view
+
+                        // News API endpoints - Admin only for management
+                        .requestMatchers("/api/news/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")  // Admin-only news management
+                        .requestMatchers("/api/news").hasAnyRole("ADMIN", "SUPER_ADMIN")           // Create new posts
+                        .requestMatchers("/api/news/{id:[0-9]+}/schedule").hasAnyRole("ADMIN", "SUPER_ADMIN")  // Schedule posts
+                        .requestMatchers("/api/news/{id:[0-9]+}/publish").hasAnyRole("ADMIN", "SUPER_ADMIN")   // Publish posts
+                        .requestMatchers("/api/news/**").hasAnyRole("ADMIN", "SUPER_ADMIN")        // All other news endpoints require admin
+
+                        // Other admin endpoints
+                        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")       // Admins only
+
+                        // Support endpoints
                         .requestMatchers("/api/support/**").hasAnyRole("SUPPORT_STAFF", "ADMIN", "SUPER_ADMIN")  // Support staff + admins
+
+                        // User endpoints
                         .requestMatchers("/api/users/**").authenticated()               // Must be logged in
+
                         .anyRequest().permitAll()                                        // Everything else is open
                 )
 
-                // Check JWT token before processing request
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                // Only apply JWT filter to API endpoints
+                .addFilterBefore(new JwtFilterWrapper(jwtAuthenticationFilter), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    // Custom filter wrapper to only apply JWT to API endpoints
+    private static class JwtFilterWrapper extends JwtAuthenticationFilter {
+        private final JwtAuthenticationFilter jwtFilter;
+
+        public JwtFilterWrapper(JwtAuthenticationFilter jwtFilter) {
+            this.jwtFilter = jwtFilter;
+        }
+
+        @Override
+        protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request,
+                                        jakarta.servlet.http.HttpServletResponse response,
+                                        jakarta.servlet.FilterChain filterChain) throws jakarta.servlet.ServletException, java.io.IOException {
+            // Only apply JWT authentication to API endpoints
+            String path = request.getRequestURI();
+            if (path.startsWith("/api/")) {
+                super.doFilterInternal(request, response, filterChain);
+            } else {
+                // For web pages, just continue without JWT processing
+                filterChain.doFilter(request, response);
+            }
+        }
     }
 }

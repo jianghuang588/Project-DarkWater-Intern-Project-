@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Release Notes - Project Darkwater</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Header */
+    .header {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      animation: slideDown 0.5s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    /* Main Content */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 60px 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 30px;
+      padding: 60px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+      animation: fadeInUp 0.8s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-section::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-title {
+      font-size: 48px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 15px;
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* Version Selector */
+    .version-selector {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+      animation: slideIn 0.8s ease-out 0.2s both;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .version-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .current-version {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .version-badge {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 10px 24px;
+      border-radius: 25px;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .version-date {
+      color: #666;
+      font-size: 16px;
+    }
+
+    .version-dropdown {
+      position: relative;
+    }
+
+    .dropdown-btn {
+      padding: 12px 24px;
+      background: #f0f0f0;
+      border: none;
+      border-radius: 25px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dropdown-btn:hover {
+      background: #e0e0e0;
+      transform: translateY(-2px);
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 10px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      min-width: 200px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .dropdown-menu.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-item {
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dropdown-item:hover {
+      background: #f8f8f8;
+      color: #667eea;
+    }
+
+    .dropdown-item:first-child {
+      border-radius: 15px 15px 0 0;
+    }
+
+    .dropdown-item:last-child {
+      border-radius: 0 0 15px 15px;
+    }
+
+    /* Release Content */
+    .release-content {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 30px;
+      padding: 50px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.8s ease-out 0.4s both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .release-header {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .release-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .release-tag {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tag-major {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .tag-minor {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .tag-patch {
+      background: #f3e5f5;
+      color: #7b1fa2;
+    }
+
+    .release-meta {
+      display: flex;
+      gap: 30px;
+      color: #666;
+      font-size: 15px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Section Headers */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 40px 0 20px;
+      font-size: 24px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .section-icon {
+      font-size: 28px;
+    }
+
+    /* Change List */
+    .change-list {
+      list-style: none;
+      margin-bottom: 40px;
+    }
+
+    .change-item {
+      padding: 20px 25px;
+      margin-bottom: 15px;
+      background: #f8f8f8;
+      border-radius: 15px;
+      border-left: 4px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .change-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.05), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .change-item:hover::before {
+      left: 100%;
+    }
+
+    .change-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .change-item.feature {
+      border-left-color: #4caf50;
+    }
+
+    .change-item.improvement {
+      border-left-color: #2196f3;
+    }
+
+    .change-item.bugfix {
+      border-left-color: #ff9800;
+    }
+
+    .change-item.breaking {
+      border-left-color: #f44336;
+    }
+
+    .change-title {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .change-description {
+      color: #666;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .change-code {
+      display: inline-block;
+      background: #e8e8e8;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 13px;
+      color: #666;
+    }
+
+    /* Download Section */
+    .download-section {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      border-radius: 20px;
+      padding: 40px;
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .download-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .download-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .download-btn {
+      padding: 16px 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .download-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+    }
+
+    /* Back Button */
+    .back-button {
+      position: fixed;
+      top: 100px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 12px 20px;
+      border-radius: 25px;
+      text-decoration: none;
+      color: #667eea;
+      font-weight: 600;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      background: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .hero-section {
+        padding: 40px 30px;
+      }
+
+      .hero-title {
+        font-size: 36px;
+      }
+
+      .version-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .release-content {
+        padding: 30px 25px;
+      }
+
+      .release-title {
+        font-size: 24px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .release-meta {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .download-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .back-button {
+        top: auto;
+        bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Header -->
+<div class="header">
+  <div class="nav-container">
+    <a href="/" class="logo">Project Darkwater</a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/news">News</a></li>
+      <li><a href="/about">About</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <h1 class="hero-title">Release Notes</h1>
+    <p class="hero-subtitle">Track all updates, improvements, and changes to Project Darkwater</p>
+  </section>
+
+  <!-- Version Selector -->
+  <div class="version-selector">
+    <div class="version-header">
+      <div class="current-version">
+        <span class="version-badge">v2.3.0</span>
+        <span class="version-date">Released November 15, 2024</span>
+      </div>
+      <div class="version-dropdown">
+        <button class="dropdown-btn" onclick="toggleDropdown()">
+          Previous Versions <span>▼</span>
+        </button>
+        <div class="dropdown-menu" id="versionDropdown">
+          <div class="dropdown-item" onclick="loadVersion('2.2.0')">
+            <span>v2.2.0</span>
+            <span style="font-size: 12px; color: #999;">Oct 28, 2024</span>
+          </div>
+          <div class="dropdown-item" onclick="loadVersion('2.1.0')">
+            <span>v2.1.0</span>
+            <span style="font-size: 12px; color: #999;">Oct 10, 2024</span>
+          </div>
+          <div class="dropdown-item" onclick="loadVersion('2.0.0')">
+            <span>v2.0.0</span>
+            <span style="font-size: 12px; color: #999;">Sep 15, 2024</span>
+          </div>
+          <div class="dropdown-item" onclick="loadVersion('1.9.0')">
+            <span>v1.9.0</span>
+            <span style="font-size: 12px; color: #999;">Aug 30, 2024</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Release Content -->
+  <div class="release-content">
+    <div class="release-header">
+      <h2 class="release-title">
+        Version 2.3.0 - Depths of Discovery
+        <span class="release-tag tag-major">Major Update</span>
+      </h2>
+      <div class="release-meta">
+        <span class="meta-item">📅 November 15, 2024</span>
+        <span class="meta-item">📦 Build #2300</span>
+        <span class="meta-item">💾 2.1 GB</span>
+      </div>
+    </div>
+
+    <!-- New Features -->
+    <h3 class="section-header">
+      <span class="section-icon">✨</span>
+      New Features
+    </h3>
+    <ul class="change-list">
+      <li class="change-item feature">
+        <div class="change-title">Coral Reef Biome</div>
+        <div class="change-description">
+          Explore the vibrant new coral reef biome featuring over 50 species of marine life,
+          dynamic ecosystems, and hidden treasures waiting to be discovered.
+        </div>
+      </li>
+      <li class="change-item feature">
+        <div class="change-title">Multiplayer Co-op Mode (Beta)</div>
+        <div class="change-description">
+          Team up with up to 4 friends to explore the depths together. Includes synchronized
+          world state, shared discoveries, and cooperative puzzle mechanics.
+        </div>
+      </li>
+      <li class="change-item feature">
+        <div class="change-title">Photo Mode</div>
+        <div class="change-description">
+          Capture stunning underwater moments with our new photo mode. Features include
+          filters, depth of field control, and free camera movement.
+        </div>
+      </li>
+    </ul>
+
+    <!-- Improvements -->
+    <h3 class="section-header">
+      <span class="section-icon">🔧</span>
+      Improvements
+    </h3>
+    <ul class="change-list">
+      <li class="change-item improvement">
+        <div class="change-title">Enhanced Swimming Mechanics</div>
+        <div class="change-description">
+          Refined swimming controls for more fluid movement. Added momentum-based physics
+          and improved response to ocean currents.
+        </div>
+      </li>
+      <li class="change-item improvement">
+        <div class="change-title">Performance Optimization</div>
+        <div class="change-description">
+          Improved rendering performance by 35% in dense coral areas. Reduced memory usage
+          and optimized shader calculations for better frame rates.
+        </div>
+      </li>
+      <li class="change-item improvement">
+        <div class="change-title">UI/UX Enhancements</div>
+        <div class="change-description">
+          Redesigned inventory interface with drag-and-drop functionality. Added quick
+          access wheel for frequently used items.
+        </div>
+      </li>
+    </ul>
+
+    <!-- Bug Fixes -->
+    <h3 class="section-header">
+      <span class="section-icon">🐛</span>
+      Bug Fixes
+    </h3>
+    <ul class="change-list">
+      <li class="change-item bugfix">
+        <div class="change-title">Fixed Oxygen Depletion Bug</div>
+        <div class="change-description">
+          Resolved issue where oxygen would deplete rapidly when transitioning between
+          biomes. Oxygen consumption now consistent across all areas.
+        </div>
+      </li>
+      <li class="change-item bugfix">
+        <div class="change-title">Audio Synchronization</div>
+        <div class="change-description">
+          Fixed underwater audio effects not properly syncing with depth changes.
+          Audio now smoothly transitions based on player position.
+        </div>
+      </li>
+      <li class="change-item bugfix">
+        <div class="change-title">Save System Reliability</div>
+        <div class="change-description">
+          Addressed rare save corruption issues. Added automatic backup system and
+          improved save validation checks.
+        </div>
+      </li>
+    </ul>
+
+    <!-- Breaking Changes -->
+    <h3 class="section-header">
+      <span class="section-icon">⚠️</span>
+      Breaking Changes
+    </h3>
+    <ul class="change-list">
+      <li class="change-item breaking">
+        <div class="change-title">Mod API Changes</div>
+        <div class="change-description">
+          Updated mod API to version 2.0. Existing mods will need to be updated to
+          support the new <span class="change-code">ModLoader.initialize()</span> method.
+        </div>
+      </li>
+    </ul>
+
+    <!-- Download Section -->
+    <div class="download-section">
+      <h3 class="download-title">Download Update</h3>
+      <div class="download-buttons">
+        <a href="#" class="download-btn">
+          <span>💻</span> Download for Windows
+        </a>
+        <a href="#" class="download-btn">
+          <span>🍎</span> Download for macOS
+        </a>
+        <a href="#" class="download-btn">
+          <span>🐧</span> Download for Linux
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Back Button -->
+<a href="/" class="back-button">← Back to Home</a>
+
+<script>
+  // Toggle version dropdown
+  function toggleDropdown() {
+    const dropdown = document.getElementById('versionDropdown');
+    dropdown.classList.toggle('show');
+  }
+
+  // Close dropdown when clicking outside
+  window.addEventListener('click', function(event) {
+    if (!event.target.matches('.dropdown-btn')) {
+      const dropdown = document.getElementById('versionDropdown');
+      dropdown.classList.remove('show');
+    }
+  });
+
+  // Load different version (placeholder)
+  function loadVersion(version) {
+    console.log('Loading version:', version);
+    // This would typically fetch the release notes for the selected version
+    alert(`Loading release notes for v${version}...`);
+    toggleDropdown();
+  }
+
+  // Smooth scroll for internal links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+</script>
+</body>
+</html>

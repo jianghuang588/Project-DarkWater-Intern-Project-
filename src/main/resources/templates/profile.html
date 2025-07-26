@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>User Profile</title>
+    <title>Profile - Project Darkwater</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 40px 20px;
+            position: relative;
         }
 
         body::before {
@@ -25,41 +25,25 @@
             height: 100%;
             background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
             pointer-events: none;
-        }
-
-        h2 {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            margin: 0 auto 30px;
-            text-align: center;
-            color: #333;
-            font-size: 32px;
-            font-weight: 600;
-            backdrop-filter: blur(10px);
-            animation: fadeInDown 0.5s ease-out;
-            position: relative;
             z-index: 1;
         }
 
-        h2::after {
-            content: '';
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 2px;
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: slideDown 0.5s ease-out;
         }
 
-        @keyframes fadeInDown {
+        @keyframes slideDown {
             from {
                 opacity: 0;
-                transform: translateY(-20px);
+                transform: translateY(-30px);
             }
             to {
                 opacity: 1;
@@ -67,24 +51,317 @@
             }
         }
 
-        div[style*="color: green"] {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724 !important;
-            padding: 15px 20px;
-            border-radius: 12px;
-            margin: 0 auto 20px;
-            max-width: 600px;
-            font-weight: 500;
-            text-align: center;
-            animation: slideIn 0.5s ease-out;
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.1);
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        div[style*="color: green"]::before {
-            content: '✓ ';
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Profile Header */
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: #667eea;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-name {
+            font-size: 36px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-email {
             font-size: 18px;
-            margin-right: 5px;
+            color: rgba(255, 255, 255, 0.9);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Profile Content */
+        .profile-content {
+            padding: 60px;
+        }
+
+        /* Profile Stats */
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .stat-card {
+            background: #f8f8f8;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Profile Info Sections */
+        .info-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #ff4757;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ff3838;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 71, 87, 0.3);
+        }
+
+        /* Achievement Section */
+        .achievements {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .achievement {
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .achievement:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .achievement-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            filter: grayscale(1);
+            opacity: 0.5;
+        }
+
+        .achievement.unlocked .achievement-icon {
+            filter: grayscale(0);
+            opacity: 1;
+        }
+
+        .achievement-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: #2ed573;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+            animation: slideIn 0.5s ease-out;
         }
 
         @keyframes slideIn {
@@ -98,260 +375,277 @@
             }
         }
 
-        h3 {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px 40px;
-            border-radius: 20px 20px 0 0;
-            max-width: 600px;
-            margin: 30px auto 0;
-            color: #333;
-            font-size: 22px;
-            font-weight: 600;
-            backdrop-filter: blur(10px);
-            position: relative;
-            z-index: 1;
-        }
-
-        h3:first-of-type {
-            animation: slideUp 0.5s ease-out 0.2s both;
-        }
-
-        h3:last-of-type {
-            margin-top: 30px;
-            animation: slideUp 0.5s ease-out 0.4s both;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Profile information section */
-        h3:first-of-type + p {
-            background: rgba(255, 255, 255, 0.95);
-            margin: 0 auto;
-            max-width: 600px;
-            padding: 0 40px;
-            backdrop-filter: blur(10px);
-            position: relative;
-            z-index: 1;
-        }
-
-        p {
-            background: rgba(255, 255, 255, 0.95);
-            margin: 0 auto;
-            max-width: 600px;
-            padding: 15px 40px;
-            color: #555;
-            font-size: 16px;
-            line-height: 1.6;
-            border-bottom: 1px solid #f0f0f0;
-            backdrop-filter: blur(10px);
-            position: relative;
-            z-index: 1;
-        }
-
-        p:nth-of-type(6), p:nth-of-type(5) {
-            border-radius: 0 0 20px 20px;
-            border-bottom: none;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        p span {
-            font-weight: 600;
-            color: #333;
-            float: right;
-        }
-
-        p span[th\:text*="ADMIN"] {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        ul {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 0 40px 30px;
-            border-radius: 0 0 20px 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: 0 auto;
-            list-style: none;
-            backdrop-filter: blur(10px);
-            position: relative;
-            z-index: 1;
-        }
-
-        li {
-            margin: 10px 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        li a {
-            display: block;
-            padding: 18px 25px;
-            background: #f8f8f8;
-            border-radius: 12px;
-            color: #333;
+        /* Back Button */
+        .back-button {
+            position: fixed;
+            top: 100px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px 20px;
+            border-radius: 25px;
             text-decoration: none;
-            font-size: 16px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-            border: 2px solid transparent;
-        }
-
-        li a::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-            transition: left 0.5s ease;
-            z-index: -1;
-        }
-
-        li a:hover::before {
-            left: 0;
-        }
-
-        li a:hover {
-            transform: translateX(10px);
-            border-color: #667eea;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
-        }
-
-        li a::after {
-            content: '→';
-            position: absolute;
-            right: 25px;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        li a:hover::after {
-            opacity: 1;
-            right: 20px;
-        }
-
-        a[href="/home"], a[href="/logout"] {
-            display: inline-block;
-            padding: 14px 30px;
-            margin: 10px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            position: relative;
-            z-index: 1;
-        }
-
-        a[href="/home"] {
             color: #667eea;
-            border: 2px solid #667eea;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
         }
 
-        a[href="/home"]:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .back-button:hover {
+            background: white;
             transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
-        a[href="/logout"] {
-            color: #e74c3c;
-            border: 2px solid #e74c3c;
-        }
-
-        a[href="/logout"]:hover {
-            background: #e74c3c;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(231, 76, 60, 0.3);
-        }
-
-        /* Center the bottom links */
-        body > br {
-            display: none;
-        }
-
-        body > a {
-            display: inline-block;
-            text-align: center;
-        }
-
-        /* Mobile responsive */
+        /* Mobile Responsive */
         @media (max-width: 768px) {
-            h2 {
+            .profile-header {
+                padding: 40px 30px;
+            }
+
+            .profile-avatar {
+                width: 120px;
+                height: 120px;
+                font-size: 48px;
+            }
+
+            .profile-name {
                 font-size: 28px;
-                padding: 25px 30px;
             }
 
-            h3 {
-                font-size: 20px;
-                padding: 15px 30px;
+            .profile-content {
+                padding: 40px 30px;
             }
 
-            p {
-                padding: 12px 30px;
-                font-size: 15px;
+            .profile-stats {
+                grid-template-columns: 1fr;
             }
 
-            ul {
-                padding: 0 30px 25px;
+            .info-grid {
+                grid-template-columns: 1fr;
             }
 
-            li a {
-                padding: 15px 20px;
-                font-size: 15px;
+            .action-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .back-button {
+                top: auto;
+                bottom: 20px;
             }
         }
     </style>
 </head>
 <body>
-<h2>User Profile</h2>
-
-<div th:if="${param.success}" style="color: green;">
-    Profile updated successfully!
+<!-- Header -->
+<div class="header">
+    <div class="nav-container">
+        <a href="/" class="logo">Project Darkwater</a>
+        <ul class="nav-links">
+            <li><a href="/home">Home</a></li>
+            <a href="/settings" class="btn btn-secondary">Account Settings</a>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
 </div>
-<div th:if="${param.passwordChanged}" style="color: green;">
-    Password changed successfully!
+
+<!-- Main Content -->
+<div class="container">
+    <!-- Success Messages -->
+    <div th:if="${param.success}" class="success-message">
+        Profile updated successfully!
+    </div>
+    <div th:if="${param.passwordChanged}" class="success-message">
+        Password changed successfully!
+    </div>
+
+    <!-- Profile Card -->
+    <div class="profile-card">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <span th:text="${#strings.substring(username, 0, 1).toUpperCase()}">U</span>
+            </div>
+            <h1 class="profile-name" th:text="${username}">Username</h1>
+            <p class="profile-email" th:text="${user.email}">user@example.com</p>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="profile-content">
+            <!-- Profile Stats -->
+            <div class="profile-stats">
+                <div class="stat-card">
+                    <div class="stat-value">247</div>
+                    <div class="stat-label">Hours Played</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">82%</div>
+                    <div class="stat-label">Completion</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">15</div>
+                    <div class="stat-label">Achievements</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">Gold</div>
+                    <div class="stat-label">Rank</div>
+                </div>
+            </div>
+
+            <!-- Account Information -->
+            <div class="info-section">
+                <h2 class="section-title">
+                    <span>👤</span> Account Information
+                </h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Username</span>
+                        <span class="info-value" th:text="${username}">username</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email</span>
+                        <span class="info-value" th:text="${user.email}">email@example.com</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Account Type</span>
+                        <span class="info-value" th:text="${user.role.toString()}">PLAYER</span>
+
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Member Since</span>
+                        <span class="info-value" th:text="${user.formattedCreatedAt != null ? user.formattedCreatedAt : 'Unknown'}">January 1, 2024</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email Verified</span>
+                        <span class="info-value" th:text="${user.emailVerified ? 'Yes ✓' : 'No ✗'}">Yes ✓</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Account Status</span>
+                        <span class="info-value" style="color: #2ed573;">Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Progress -->
+            <div class="info-section">
+                <h2 class="section-title">
+                    <span>🎮</span> Game Progress
+                </h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Current Level</span>
+                        <span class="info-value">Level 42</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Experience Points</span>
+                        <span class="info-value">12,450 XP</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Discoveries</span>
+                        <span class="info-value">127 / 200</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Rare Items</span>
+                        <span class="info-value">23</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="info-section">
+                <h2 class="section-title">
+                    <span>🏆</span> Recent Achievements
+                </h2>
+                <div class="achievements">
+                    <div class="achievement unlocked">
+                        <div class="achievement-icon">🌊</div>
+                        <div class="achievement-name">Deep Diver</div>
+                    </div>
+                    <div class="achievement unlocked">
+                        <div class="achievement-icon">🔍</div>
+                        <div class="achievement-name">Explorer</div>
+                    </div>
+                    <div class="achievement unlocked">
+                        <div class="achievement-icon">⚡</div>
+                        <div class="achievement-name">Speed Runner</div>
+                    </div>
+                    <div class="achievement">
+                        <div class="achievement-icon">👑</div>
+                        <div class="achievement-name">Master</div>
+                    </div>
+                    <div class="achievement">
+                        <div class="achievement-icon">💎</div>
+                        <div class="achievement-name">Collector</div>
+                    </div>
+                    <div class="achievement">
+                        <div class="achievement-icon">🌟</div>
+                        <div class="achievement-name">Legend</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="/profile/edit" class="btn btn-primary">Edit Profile</a>
+                <a href="/profile/change-password" class="btn btn-secondary">Change Password</a>
+                <a href="/settings" class="btn btn-secondary">Account Settings</a>
+            </div>
+        </div>
+    </div>
 </div>
 
-<h3>Profile Information</h3>
-<p>Username: <span th:text="${user?.username ?: 'Not set'}"></span></p>
-<p>Email: <span th:text="${user?.email ?: 'Not set'}"></span></p>
-<!-- Only show role if user is not a regular USER -->
-<p th:if="${user?.role != null && user.role.toString() != 'USER'}">Role: <span th:text="${user.role}"></span></p>
-<p>Account Status: <span th:text="${user?.status ?: 'ACTIVE'}"></span></p>
-<p>Email Verified: <span th:text="${user?.emailVerified ?: 'No'}"></span></p>
-<p>Member Since: <span th:text="${user?.formattedCreatedAt ?: 'Unknown'}"></span></p>
+<!-- Back Button -->
+<a href="/home" class="back-button">← Back to Home</a>
 
-<h3>Actions</h3>
-<ul>
-    <li><a href="/profile/edit">Edit Profile</a></li>
-    <li><a href="/profile/change-password">Change Password</a></li>
-</ul>
+<script>
+    // Animate stats on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const statValues = document.querySelectorAll('.stat-value');
+        statValues.forEach(stat => {
+            const value = stat.textContent;
+            if (!isNaN(value)) {
+                animateValue(stat, 0, parseInt(value), 1500);
+            }
+        });
+    });
 
-<br>
-<a href="/home">Back to Home</a><br>
-<a href="/logout">Logout</a>
+    function animateValue(element, start, end, duration) {
+        const range = end - start;
+        const increment = range / (duration / 16);
+        let current = start;
+
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= end) {
+                current = end;
+                clearInterval(timer);
+            }
+            element.textContent = Math.floor(current);
+        }, 16);
+    }
+
+    // Achievement tooltips
+    document.querySelectorAll('.achievement').forEach(achievement => {
+        achievement.addEventListener('click', function() {
+            const name = this.querySelector('.achievement-name').textContent;
+            const isUnlocked = this.classList.contains('unlocked');
+            const message = isUnlocked ?
+                `Achievement Unlocked: ${name}` :
+                `Achievement Locked: ${name} - Keep playing to unlock!`;
+            alert(message);
+        });
+    });
+</script>
 </body>
 </html>

@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>News - Project Darkwater</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Header */
+    .header {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      animation: slideDown 0.5s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    /* Main Content */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 30px;
+      padding: 80px 60px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+      margin-bottom: 60px;
+      animation: fadeInUp 0.8s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 0.3; }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-title {
+      font-size: 56px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-subtitle {
+      font-size: 20px;
+      color: #666;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+      animation: slideIn 0.8s ease-out 0.2s both;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .filter-container {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .filter-btn {
+      padding: 12px 24px;
+      background: #f0f0f0;
+      border: 2px solid transparent;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .filter-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .filter-btn:hover:not(.active) {
+      border-color: #667eea;
+      background: rgba(102, 126, 234, 0.1);
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 20px 12px 45px;
+      border: 2px solid #e0e0e0;
+      border-radius: 25px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+      font-size: 18px;
+    }
+
+    /* News Grid */
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    /* Featured Article */
+    .featured-article {
+      grid-column: 1 / -1;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      min-height: 400px;
+      animation: fadeInUp 0.8s ease-out 0.4s both;
+      position: relative;
+    }
+
+    .featured-content {
+      padding: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .featured-tag {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      width: fit-content;
+    }
+
+    .featured-title {
+      font-size: 36px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+
+    .featured-excerpt {
+      font-size: 18px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .featured-meta {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      color: #999;
+      font-size: 14px;
+    }
+
+    .featured-date {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .featured-author {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .featured-image {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .featured-image::before {
+      content: '📰';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 120px;
+      opacity: 0.2;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+      50% { transform: translate(-50%, -50%) translateY(-20px); }
+    }
+
+    /* Article Card */
+    .article-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.8s ease-out;
+      animation-fill-mode: both;
+      cursor: pointer;
+    }
+
+    .article-card:nth-child(2) { animation-delay: 0.1s; }
+    .article-card:nth-child(3) { animation-delay: 0.2s; }
+    .article-card:nth-child(4) { animation-delay: 0.3s; }
+    .article-card:nth-child(5) { animation-delay: 0.4s; }
+    .article-card:nth-child(6) { animation-delay: 0.5s; }
+
+    .article-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    .article-image {
+      height: 200px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .article-image::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+    }
+
+    .article-category {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #667eea;
+      backdrop-filter: blur(10px);
+      z-index: 1;
+    }
+
+    .article-content {
+      padding: 30px;
+    }
+
+    .article-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 15px;
+      line-height: 1.3;
+    }
+
+    .article-excerpt {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+
+    .article-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 20px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .article-date {
+      color: #999;
+      font-size: 14px;
+    }
+
+    .read-more {
+      color: #667eea;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: gap 0.3s ease;
+    }
+
+    .read-more:hover {
+      gap: 10px;
+    }
+
+    /* Load More */
+    .load-more {
+      text-align: center;
+      margin: 60px 0;
+    }
+
+    .load-more-btn {
+      display: inline-block;
+      padding: 18px 50px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 2px solid #667eea;
+      border-radius: 30px;
+      color: #667eea;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .load-more-btn:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+      border-color: transparent;
+    }
+
+    /* Newsletter Section */
+    .newsletter-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 30px;
+      padding: 60px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+      margin-top: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .newsletter-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(118, 75, 162, 0.05) 0%, transparent 70%);
+      animation: pulse 5s ease-in-out infinite reverse;
+    }
+
+    .newsletter-title {
+      font-size: 36px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 15px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .newsletter-text {
+      color: #666;
+      font-size: 18px;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 20px;
+      max-width: 500px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .newsletter-input {
+      flex: 1;
+      padding: 16px 24px;
+      border: 2px solid #e0e0e0;
+      border-radius: 30px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .newsletter-input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+    }
+
+    .newsletter-btn {
+      padding: 16px 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .newsletter-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Back Button */
+    .back-button {
+      position: fixed;
+      top: 100px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 12px 20px;
+      border-radius: 25px;
+      text-decoration: none;
+      color: #667eea;
+      font-weight: 600;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      background: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .hero-section {
+        padding: 40px 30px;
+      }
+
+      .hero-title {
+        font-size: 36px;
+      }
+
+      .filter-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filter-group {
+        overflow-x: auto;
+        padding-bottom: 10px;
+      }
+
+      .news-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .featured-article {
+        grid-template-columns: 1fr;
+      }
+
+      .featured-content {
+        padding: 40px 30px;
+      }
+
+      .featured-title {
+        font-size: 28px;
+      }
+
+      .featured-image {
+        height: 200px;
+      }
+
+      .newsletter-form {
+        flex-direction: column;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .back-button {
+        top: auto;
+        bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Header -->
+<div class="header">
+  <div class="nav-container">
+    <a href="/" class="logo">Project Darkwater</a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/release-notes">Release Notes</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <h1 class="hero-title">Latest News & Updates</h1>
+    <p class="hero-subtitle">Stay informed about Project Darkwater's development journey</p>
+  </section>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-container">
+      <div class="filter-group">
+        <button class="filter-btn active" onclick="filterNews('all')">All News</button>
+        <button class="filter-btn" onclick="filterNews('announcements')">Announcements</button>
+        <button class="filter-btn" onclick="filterNews('development')">Development</button>
+        <button class="filter-btn" onclick="filterNews('community')">Community</button>
+        <button class="filter-btn" onclick="filterNews('events')">Events</button>
+      </div>
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" placeholder="Search articles..." id="searchInput">
+      </div>
+    </div>
+  </div>
+
+  <!-- News Grid -->
+  <div class="news-grid">
+    <!-- Featured Article -->
+    <article class="featured-article">
+      <div class="featured-content">
+        <span class="featured-tag">Featured</span>
+        <h2 class="featured-title">Beta Launch Announcement: Dive Into the Depths</h2>
+        <p class="featured-excerpt">
+          We're thrilled to announce that Project Darkwater's beta phase is officially launching next month!
+          Join thousands of players as we explore the mysterious underwater world together.
+        </p>
+        <div class="featured-meta">
+          <span class="featured-date">📅 November 15, 2024</span>
+          <span class="featured-author">👤 Dev Team</span>
+        </div>
+      </div>
+      <div class="featured-image"></div>
+    </article>
+
+    <!-- Article Cards -->
+    <article class="article-card" data-category="development">
+      <div class="article-image">
+        <span class="article-category">Development</span>
+      </div>
+      <div class="article-content">
+        <h3 class="article-title">New Coral Reef Biome: A Colorful Paradise</h3>
+        <p class="article-excerpt">
+          Explore the vibrant coral reef biome, featuring over 50 new species of marine life and
+          unique gameplay mechanics designed to immerse you in this underwater ecosystem.
+        </p>
+        <div class="article-footer">
+          <span class="article-date">November 10, 2024</span>
+          <a href="#" class="read-more">Read More →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="article-card" data-category="community">
+      <div class="article-image">
+        <span class="article-category">Community</span>
+      </div>
+      <div class="article-content">
+        <h3 class="article-title">Community Spotlight: Amazing Fan Art Collection</h3>
+        <p class="article-excerpt">
+          This week, we're showcasing incredible artwork created by our talented community.
+          From concept designs to character illustrations, see how players envision Darkwater.
+        </p>
+        <div class="article-footer">
+          <span class="article-date">November 8, 2024</span>
+          <a href="#" class="read-more">Read More →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="article-card" data-category="announcements">
+      <div class="article-image">
+        <span class="article-category">Announcement</span>
+      </div>
+      <div class="article-content">
+        <h3 class="article-title">Multiplayer Testing Phase Begins</h3>
+        <p class="article-excerpt">
+          We're opening up multiplayer testing to our alpha community! Learn how to join
+          sessions and help us refine the cooperative gameplay experience.
+        </p>
+        <div class="article-footer">
+          <span class="article-date">November 5, 2024</span>
+          <a href="#" class="read-more">Read More →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="article-card" data-category="development">
+      <div class="article-image">
+        <span class="article-category">Development</span>
+      </div>
+      <div class="article-content">
+        <h3 class="article-title">Behind the Scenes: Creating Underwater Physics</h3>
+        <p class="article-excerpt">
+          Our physics team shares insights into developing realistic underwater movement
+          and the challenges of simulating ocean currents and pressure systems.
+        </p>
+        <div class="article-footer">
+          <span class="article-date">November 2, 2024</span>
+          <a href="#" class="read-more">Read More →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="article-card" data-category="events">
+      <div class="article-image">
+        <span class="article-category">Events</span>
+      </div>
+      <div class="article-content">
+        <h3 class="article-title">Join Us at Gaming Expo 2024</h3>
+        <p class="article-excerpt">
+          Project Darkwater will be featured at Gaming Expo 2024! Visit our booth for
+          exclusive gameplay demos and meet the development team in person.
+        </p>
+        <div class="article-footer">
+          <span class="article-date">October 30, 2024</span>
+          <a href="#" class="read-more">Read More →</a>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <!-- Load More -->
+  <div class="load-more">
+    <a href="#" class="load-more-btn" onclick="loadMoreArticles()">Load More Articles</a>
+  </div>
+
+  <!-- Newsletter Section -->
+  <section class="newsletter-section">
+    <h2 class="newsletter-title">Stay in the Loop</h2>
+    <p class="newsletter-text">Subscribe to our newsletter for exclusive updates and early access opportunities</p>
+    <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+      <input type="email" class="newsletter-input" placeholder="Enter your email" required>
+      <button type="submit" class="newsletter-btn">Subscribe</button>
+    </form>
+  </section>
+</div>
+
+<!-- Back Button -->
+<a href="/" class="back-button">← Back to Home</a>
+
+<script>
+  // Filter functionality
+  function filterNews(category) {
+    // Update active button
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+
+    // Filter articles
+    const articles = document.querySelectorAll('.article-card');
+    articles.forEach(article => {
+      if (category === 'all' || article.getAttribute('data-category') === category) {
+        article.style.display = 'block';
+      } else {
+        article.style.display = 'none';
+      }
+    });
+  }
+
+  // Search functionality
+  document.getElementById('searchInput').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const articles = document.querySelectorAll('.article-card');
+
+    articles.forEach(article => {
+      const title = article.querySelector('.article-title').textContent.toLowerCase();
+      const excerpt = article.querySelector('.article-excerpt').textContent.toLowerCase();
+
+      if (title.includes(searchTerm) || excerpt.includes(searchTerm)) {
+        article.style.display = 'block';
+      } else {
+        article.style.display = 'none';
+      }
+    });
+  });
+
+  // Load more articles
+  function loadMoreArticles() {
+    // This would typically fetch more articles from the backend
+    alert('Loading more articles... (This would connect to your news API)');
+  }
+
+  // Newsletter subscription
+  function subscribeNewsletter(event) {
+    event.preventDefault();
+    const email = event.target.querySelector('input[type="email"]').value;
+    alert(`Thank you for subscribing with: ${email}`);
+    event.target.reset();
+  }
+</script>
+</body>
+</html>

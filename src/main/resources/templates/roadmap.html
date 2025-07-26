@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Roadmap - Project Darkwater</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Header */
+    .header {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      animation: slideDown 0.5s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    /* Main Content */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Page Title */
+    .page-title {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 30px;
+      padding: 60px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .page-title h1 {
+      font-size: 48px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 15px;
+    }
+
+    .page-title p {
+      font-size: 18px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* Timeline Navigation */
+    .timeline-nav {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 10px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+      display: flex;
+      gap: 10px;
+      animation: slideIn 0.8s ease-out 0.2s both;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .timeline-btn {
+      flex: 1;
+      padding: 15px 20px;
+      background: transparent;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: #666;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timeline-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      transition: left 0.5s ease;
+      z-index: -1;
+    }
+
+    .timeline-btn:hover::before {
+      left: 0;
+    }
+
+    .timeline-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Roadmap Content */
+    .roadmap-content {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 30px;
+      padding: 60px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+      min-height: 600px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timeline-section {
+      display: none;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .timeline-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Milestone Cards */
+    .milestone-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .milestone-card {
+      background: #f8f8f8;
+      border-radius: 20px;
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .milestone-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .milestone-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .milestone-icon {
+      font-size: 36px;
+      margin-bottom: 15px;
+      display: block;
+    }
+
+    .milestone-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .milestone-date {
+      font-size: 14px;
+      color: #667eea;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .milestone-description {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .milestone-status {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-completed {
+      background: #e8f5e8;
+      color: #2e7d32;
+    }
+
+    .status-in-progress {
+      background: #fff3e0;
+      color: #f57c00;
+    }
+
+    .status-planned {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    /* Feature Details Modal */
+    .feature-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .feature-modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      animation: modalSlideUp 0.3s ease-out;
+    }
+
+    @keyframes modalSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 30px;
+      cursor: pointer;
+      color: #999;
+      transition: color 0.3s ease;
+    }
+
+    .close-btn:hover {
+      color: #333;
+    }
+
+    .modal-body {
+      color: #666;
+      line-height: 1.8;
+    }
+
+    .feature-list {
+      list-style: none;
+      margin: 20px 0;
+    }
+
+    .feature-list li {
+      padding: 10px 0;
+      padding-left: 30px;
+      position: relative;
+    }
+
+    .feature-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #667eea;
+      font-weight: bold;
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+      text-align: center;
+      animation: slideIn 0.8s ease-out 0.4s both;
+    }
+
+    .progress-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 30px;
+      background: #f0f0f0;
+      border-radius: 15px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      width: 65%;
+      border-radius: 15px;
+      transition: width 1s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      to { left: 100%; }
+    }
+
+    .progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    /* Back Button */
+    .back-button {
+      position: fixed;
+      top: 100px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 12px 20px;
+      border-radius: 25px;
+      text-decoration: none;
+      color: #667eea;
+      font-weight: 600;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      background: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .page-title h1 {
+        font-size: 36px;
+      }
+
+      .timeline-nav {
+        flex-direction: column;
+      }
+
+      .timeline-btn {
+        width: 100%;
+      }
+
+      .milestone-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .back-button {
+        top: auto;
+        bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Header -->
+<div class="header">
+  <div class="nav-container">
+    <a href="/" class="logo">Project Darkwater</a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/faq">FAQ</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+  <!-- Page Title -->
+  <div class="page-title">
+    <h1>Development Roadmap</h1>
+    <p>Track our progress and see what's coming next</p>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-container">
+    <div class="progress-title">Overall Development Progress</div>
+    <div class="progress-bar">
+      <div class="progress-fill">
+        <span class="progress-text">65% Complete</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline Navigation -->
+  <div class="timeline-nav">
+    <button class="timeline-btn active" onclick="showTimeline('past')">Past</button>
+    <button class="timeline-btn" onclick="showTimeline('current')">Current</button>
+    <button class="timeline-btn" onclick="showTimeline('future')">Future</button>
+  </div>
+
+  <!-- Roadmap Content -->
+  <div class="roadmap-content">
+    <!-- Past Section -->
+    <div class="timeline-section active" id="past">
+      <h2 style="font-size: 32px; color: #333; margin-bottom: 20px;">Completed Milestones</h2>
+      <p style="color: #666; margin-bottom: 30px;">These features have been successfully implemented and are now part of the game.</p>
+
+      <div class="milestone-grid">
+        <div class="milestone-card" onclick="showFeatureDetails('core-mechanics')">
+          <span class="milestone-icon">⚙️</span>
+          <h3 class="milestone-title">Core Game Mechanics</h3>
+          <p class="milestone-date">Completed: March 2023</p>
+          <p class="milestone-description">
+            Implemented fundamental gameplay systems including swimming mechanics,
+            oxygen management, and basic interactions.
+          </p>
+          <span class="milestone-status status-completed">Completed</span>
+        </div>
+
+        <div class="milestone-card" onclick="showFeatureDetails('environment')">
+          <span class="milestone-icon">🌊</span>
+          <h3 class="milestone-title">Underwater Environment</h3>
+          <p class="milestone-date">Completed: June 2023</p>
+          <p class="milestone-description">
+            Created stunning underwater landscapes with dynamic lighting,
+            particle effects, and realistic water physics.
+          </p>
+          <span class="milestone-status status-completed">Completed</span>
+        </div>
+
+        <div class="milestone-card" onclick="showFeatureDetails('alpha')">
+          <span class="milestone-icon">🚀</span>
+          <h3 class="milestone-title">Alpha Launch</h3>
+          <p class="milestone-date">Completed: September 2023</p>
+          <p class="milestone-description">
+            Successfully launched alpha version to select testers with
+            core gameplay loop and initial content.
+          </p>
+          <span class="milestone-status status-completed">Completed</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Current Section -->
+    <div class="timeline-section" id="current">
+      <h2 style="font-size: 32px; color: #333; margin-bottom: 20px;">In Development</h2>
+      <p style="color: #666; margin-bottom: 30px;">Features we're actively working on right now.</p>
+
+      <div class="milestone-grid">
+        <div class="milestone-card" onclick="showFeatureDetails('multiplayer')">
+          <span class="milestone-icon">👥</span>
+          <h3 class="milestone-title">Multiplayer Integration</h3>
+          <p class="milestone-date">Target: Q1 2024</p>
+          <p class="milestone-description">
+            Adding cooperative multiplayer support for up to 4 players
+            with synchronized exploration and shared discoveries.
+          </p>
+          <span class="milestone-status status-in-progress">In Progress</span>
+        </div>
+
+        <div class="milestone-card" onclick="showFeatureDetails('creatures')">
+          <span class="milestone-icon">🐠</span>
+          <h3 class="milestone-title">Marine Life System</h3>
+          <p class="milestone-date">Target: Q1 2024</p>
+          <p class="milestone-description">
+            Implementing diverse marine creatures with realistic AI
+            behaviors and ecosystem interactions.
+          </p>
+          <span class="milestone-status status-in-progress">In Progress</span>
+        </div>
+
+        <div class="milestone-card" onclick="showFeatureDetails('crafting')">
+          <span class="milestone-icon">🔧</span>
+          <h3 class="milestone-title">Equipment & Crafting</h3>
+          <p class="milestone-date">Target: Q2 2024</p>
+          <p class="milestone-description">
+            Developing a comprehensive crafting system for tools,
+            equipment upgrades, and underwater vehicles.
+          </p>
+          <span class="milestone-status status-in-progress">In Progress</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Future Section -->
+    <div class="timeline-section" id="future">
+      <h2 style="font-size: 32px; color: #333; margin-bottom: 20px;">Planned Features</h2>
+      <p style="color: #666; margin-bottom: 30px;">Exciting features we're planning for future updates.</p>
+
+      <div class="milestone-grid">
+        <div class="milestone-card" onclick="showFeatureDetails('story')">
+          <span class="milestone-icon">📚</span>
+          <h3 class="milestone-title">Story Campaign</h3>
+          <p class="milestone-date">Target: Q3 2024</p>
+          <p class="milestone-description">
+            Full narrative campaign with voice acting, cutscenes,
+            and multiple story paths to explore.
+          </p>
+          <span class="milestone-status status-planned">Planned</span>
+        </div>
+
+        <div class="milestone-card" onclick="showFeatureDetails('vr')">
+          <span class="milestone-icon">🥽</span>
+          <h3 class="milestone-title">VR Support</h3>
+          <p class="milestone-date">Target: Q4 2024</p>
+          <p class="milestone-description">
+            Full VR implementation for an even more immersive
+            underwater exploration experience.
+          </p>
+          <span class="milestone-status status-planned">Planned</span>
+        </div>
+
+        <div class="milestone-card" onclick="showFeatureDetails('modding')">
+          <span class="milestone-icon">🔨</span>
+          <h3 class="milestone-title">Mod Support</h3>
+          <p class="milestone-date">Target: 2025</p>
+          <p class="milestone-description">
+            Community modding tools and Steam Workshop integration
+            for custom content creation.
+          </p>
+          <span class="milestone-status status-planned">Planned</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Feature Details Modal -->
+<div class="feature-modal" id="featureModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modalTitle">Feature Details</h3>
+      <button class="close-btn" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <!-- Content will be dynamically inserted here -->
+    </div>
+  </div>
+</div>
+
+<!-- Back Button -->
+<a href="/" class="back-button">← Back to Home</a>
+
+<script>
+  // Timeline switching
+  function showTimeline(timeline) {
+    // Update button states
+    document.querySelectorAll('.timeline-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+
+    // Update section visibility
+    document.querySelectorAll('.timeline-section').forEach(section => {
+      section.classList.remove('active');
+    });
+    document.getElementById(timeline).classList.add('active');
+  }
+
+  // Feature details modal
+  const featureDetails = {
+    'core-mechanics': {
+      title: 'Core Game Mechanics',
+      content: `
+                    <p>The foundation of Project Darkwater's gameplay experience:</p>
+                    <ul class="feature-list">
+                        <li>Advanced swimming physics with realistic buoyancy</li>
+                        <li>Oxygen management system with upgradeable equipment</li>
+                        <li>Interactive environment elements</li>
+                        <li>Inventory and equipment management</li>
+                        <li>Basic crafting system</li>
+                    </ul>
+                    <p>These core mechanics provide the essential framework for all other gameplay features.</p>
+                `
+    },
+    'environment': {
+      title: 'Underwater Environment',
+      content: `
+                    <p>A breathtaking underwater world to explore:</p>
+                    <ul class="feature-list">
+                        <li>Procedurally generated cave systems</li>
+                        <li>Dynamic day/night cycle affecting visibility</li>
+                        <li>Realistic water caustics and volumetric lighting</li>
+                        <li>Multiple biomes with unique characteristics</li>
+                        <li>Environmental hazards and obstacles</li>
+                    </ul>
+                    <p>Each area offers unique challenges and discoveries for players to uncover.</p>
+                `
+    },
+    'multiplayer': {
+      title: 'Multiplayer Integration',
+      content: `
+                    <p>Explore the depths with friends:</p>
+                    <ul class="feature-list">
+                        <li>Support for 2-4 player co-op</li>
+                        <li>Synchronized world state</li>
+                        <li>Shared inventory and resources</li>
+                        <li>Voice chat with proximity effects</li>
+                        <li>Cooperative puzzle solving</li>
+                    </ul>
+                    <p>Work together to overcome challenges and discover secrets hidden in the deep.</p>
+                `
+    }
+    // Add more feature details as needed
+  };
+
+  function showFeatureDetails(featureId) {
+    const modal = document.getElementById('featureModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+
+    if (featureDetails[featureId]) {
+      modalTitle.textContent = featureDetails[featureId].title;
+      modalBody.innerHTML = featureDetails[featureId].content;
+    } else {
+      modalTitle.textContent = 'Feature Details';
+      modalBody.innerHTML = '<p>Details for this feature are coming soon!</p>';
+    }
+
+    modal.classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('featureModal').classList.remove('show');
+  }
+
+  // Close modal when clicking outside
+  window.addEventListener('click', function(event) {
+    const modal = document.getElementById('featureModal');
+    if (event.target === modal) {
+      closeModal();
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>About Project Darkwater</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Header */
+    .header {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      animation: slideDown 0.5s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    /* Main Content */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 30px;
+      padding: 80px 60px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-title {
+      font-size: 56px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+      animation: titleGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes titleGlow {
+      from {
+        filter: brightness(1);
+      }
+      to {
+        filter: brightness(1.2);
+      }
+    }
+
+    .hero-subtitle {
+      font-size: 24px;
+      color: #666;
+      margin-bottom: 30px;
+      font-weight: 300;
+    }
+
+    .hero-description {
+      font-size: 18px;
+      color: #555;
+      line-height: 1.8;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Feature Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 40px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      animation: slideIn 0.8s ease-out;
+      animation-fill-mode: both;
+    }
+
+    .feature-card:nth-child(1) { animation-delay: 0.1s; }
+    .feature-card:nth-child(2) { animation-delay: 0.2s; }
+    .feature-card:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .feature-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .feature-description {
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* Team Section */
+    .team-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 30px;
+      padding: 60px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 36px;
+      font-weight: 600;
+      color: #333;
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+
+    .team-member {
+      text-align: center;
+      padding: 30px;
+      background: #f8f8f8;
+      border-radius: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .team-member:hover {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      transform: translateY(-5px);
+    }
+
+    .member-avatar {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      color: white;
+    }
+
+    .member-name {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .member-role {
+      color: #667eea;
+      font-weight: 500;
+    }
+
+    /* Timeline */
+    .timeline {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 30px;
+      padding: 60px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 40px;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeInLeft 0.8s ease-out forwards;
+    }
+
+    .timeline-item:nth-child(1) { animation-delay: 0.1s; }
+    .timeline-item:nth-child(2) { animation-delay: 0.3s; }
+    .timeline-item:nth-child(3) { animation-delay: 0.5s; }
+    .timeline-item:nth-child(4) { animation-delay: 0.7s; }
+
+    @keyframes fadeInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 5px;
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+    }
+
+    .timeline-item::after {
+      content: '';
+      position: absolute;
+      left: 9px;
+      top: 25px;
+      width: 2px;
+      height: calc(100% + 20px);
+      background: #e0e0e0;
+    }
+
+    .timeline-item:last-child::after {
+      display: none;
+    }
+
+    .timeline-date {
+      font-size: 14px;
+      color: #667eea;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .timeline-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .timeline-description {
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* Back Button */
+    .back-button {
+      position: fixed;
+      top: 100px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 12px 20px;
+      border-radius: 25px;
+      text-decoration: none;
+      color: #667eea;
+      font-weight: 600;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      background: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .hero-section {
+        padding: 40px 30px;
+      }
+
+      .hero-title {
+        font-size: 36px;
+      }
+
+      .hero-subtitle {
+        font-size: 20px;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .back-button {
+        top: auto;
+        bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Header -->
+<div class="header">
+  <div class="nav-container">
+    <a href="/" class="logo">Project Darkwater</a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/faq">FAQ</a></li>
+      <li><a href="/roadmap">Roadmap</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <h1 class="hero-title">Project Darkwater</h1>
+    <p class="hero-subtitle">Dive into the Depths of Adventure</p>
+    <p class="hero-description">
+      Project Darkwater is an immersive underwater exploration game that combines
+      stunning visuals, engaging gameplay, and a mysterious narrative. Set in the
+      unexplored depths of the ocean, players will uncover ancient secrets, encounter
+      fascinating marine life, and solve challenging puzzles in a beautifully crafted
+      underwater world.
+    </p>
+  </section>
+
+  <!-- Features Grid -->
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">🌊</span>
+      <h3 class="feature-title">Immersive Underwater World</h3>
+      <p class="feature-description">
+        Explore vast underwater environments filled with bioluminescent creatures,
+        ancient ruins, and hidden treasures. Every dive reveals new mysteries to uncover.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <span class="feature-icon">🎮</span>
+      <h3 class="feature-title">Innovative Gameplay</h3>
+      <p class="feature-description">
+        Master unique underwater mechanics, from managing oxygen levels to navigating
+        ocean currents. Use specialized equipment to explore deeper and darker waters.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <span class="feature-icon">📖</span>
+      <h3 class="feature-title">Rich Narrative</h3>
+      <p class="feature-description">
+        Unravel the mystery of an ancient underwater civilization through environmental
+        storytelling, discovered artifacts, and cryptic messages left behind.
+      </p>
+    </div>
+  </div>
+
+  <!-- Team Section -->
+  <section class="team-section">
+    <h2 class="section-title">Meet Our Team</h2>
+    <div class="team-grid">
+      <div class="team-member">
+        <div class="member-avatar">👤</div>
+        <h4 class="member-name">Alex Chen</h4>
+        <p class="member-role">Creative Director</p>
+      </div>
+      <div class="team-member">
+        <div class="member-avatar">👤</div>
+        <h4 class="member-name">Sarah Martinez</h4>
+        <p class="member-role">Lead Developer</p>
+      </div>
+      <div class="team-member">
+        <div class="member-avatar">👤</div>
+        <h4 class="member-name">Marcus Johnson</h4>
+        <p class="member-role">Art Director</p>
+      </div>
+      <div class="team-member">
+        <div class="member-avatar">👤</div>
+        <h4 class="member-name">Emily Park</h4>
+        <p class="member-role">Sound Designer</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Timeline -->
+  <section class="timeline">
+    <h2 class="section-title">Our Journey</h2>
+    <div class="timeline-item">
+      <div class="timeline-date">January 2023</div>
+      <div class="timeline-title">Project Inception</div>
+      <div class="timeline-description">
+        The initial concept for Project Darkwater was born from our passion for ocean exploration and mystery games.
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">June 2023</div>
+      <div class="timeline-title">Pre-Production</div>
+      <div class="timeline-description">
+        Core gameplay mechanics were prototyped and the art style was established through concept art.
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">December 2023</div>
+      <div class="timeline-title">Alpha Release</div>
+      <div class="timeline-description">
+        First playable build released to a select group of testers for initial feedback.
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">Coming 2024</div>
+      <div class="timeline-title">Beta Launch</div>
+      <div class="timeline-description">
+        Public beta testing begins with expanded content and multiplayer features.
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Back Button -->
+<a href="/" class="back-button">← Back to Home</a>
+</body>
+</html>

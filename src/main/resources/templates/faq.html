@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>FAQ - Project Darkwater</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Header */
+    .header {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      animation: slideDown 0.5s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    /* Main Content */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Page Title */
+    .page-title {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 30px;
+      padding: 60px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .page-title h1 {
+      font-size: 48px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 15px;
+    }
+
+    .page-title p {
+      font-size: 18px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* Search Bar */
+    .search-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      animation: slideIn 0.8s ease-out 0.2s both;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 18px 25px;
+      border: 2px solid #e0e0e0;
+      border-radius: 15px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: #f8f8f8;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+    }
+
+    .search-input::placeholder {
+      color: #999;
+    }
+
+    /* FAQ Categories */
+    .categories {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeIn 0.8s ease-out 0.4s both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .category-btn {
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 2px solid transparent;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .category-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .category-btn:hover:not(.active) {
+      border-color: #667eea;
+      background: rgba(102, 126, 234, 0.1);
+    }
+
+    /* FAQ Items */
+    .faq-item {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.8s ease-out;
+      animation-fill-mode: both;
+    }
+
+    .faq-item:nth-child(1) { animation-delay: 0.1s; }
+    .faq-item:nth-child(2) { animation-delay: 0.2s; }
+    .faq-item:nth-child(3) { animation-delay: 0.3s; }
+    .faq-item:nth-child(4) { animation-delay: 0.4s; }
+    .faq-item:nth-child(5) { animation-delay: 0.5s; }
+
+    .faq-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .faq-question {
+      padding: 25px 30px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      font-size: 18px;
+      color: #333;
+      transition: all 0.3s ease;
+    }
+
+    .faq-question:hover {
+      color: #667eea;
+    }
+
+    .faq-icon {
+      font-size: 24px;
+      transition: transform 0.3s ease;
+      color: #667eea;
+    }
+
+    .faq-item.active .faq-icon {
+      transform: rotate(45deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 500px;
+    }
+
+    .faq-answer-content {
+      padding: 0 30px 25px;
+      color: #666;
+      line-height: 1.8;
+      font-size: 16px;
+    }
+
+    /* Helpful Section */
+    .helpful-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 30px;
+      padding: 40px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+      margin-top: 60px;
+      animation: fadeIn 0.8s ease-out 0.6s both;
+    }
+
+    .helpful-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .helpful-text {
+      color: #666;
+      margin-bottom: 25px;
+      font-size: 16px;
+    }
+
+    .contact-btn {
+      display: inline-block;
+      padding: 16px 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .contact-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+    }
+
+    /* Back Button */
+    .back-button {
+      position: fixed;
+      top: 100px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 12px 20px;
+      border-radius: 25px;
+      text-decoration: none;
+      color: #667eea;
+      font-weight: 600;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      background: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .page-title h1 {
+        font-size: 36px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .categories {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 10px;
+      }
+
+      .faq-question {
+        font-size: 16px;
+      }
+
+      .back-button {
+        top: auto;
+        bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Header -->
+<div class="header">
+  <div class="nav-container">
+    <a href="/" class="logo">Project Darkwater</a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/roadmap">Roadmap</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+  <!-- Page Title -->
+  <div class="page-title">
+    <h1>Frequently Asked Questions</h1>
+    <p>Find answers to common questions about Project Darkwater</p>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-container">
+    <input type="text" class="search-input" placeholder="Search FAQs..." id="faqSearch">
+  </div>
+
+  <!-- Categories -->
+  <div class="categories">
+    <button class="category-btn active" onclick="filterFAQ('all')">All</button>
+    <button class="category-btn" onclick="filterFAQ('gameplay')">Gameplay</button>
+    <button class="category-btn" onclick="filterFAQ('technical')">Technical</button>
+    <button class="category-btn" onclick="filterFAQ('account')">Account</button>
+    <button class="category-btn" onclick="filterFAQ('beta')">Beta Access</button>
+  </div>
+
+  <!-- FAQ Items -->
+  <div class="faq-container">
+    <div class="faq-item" data-category="gameplay">
+      <div class="faq-question" onclick="toggleFAQ(this)">
+        <span>What is Project Darkwater?</span>
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-content">
+          Project Darkwater is an immersive underwater exploration game that combines stunning visuals,
+          engaging gameplay, and a mysterious narrative. Players explore the depths of the ocean,
+          uncovering ancient secrets and encountering fascinating marine life.
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-category="technical">
+      <div class="faq-question" onclick="toggleFAQ(this)">
+        <span>What are the system requirements?</span>
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-content">
+          <strong>Minimum Requirements:</strong><br>
+          • OS: Windows 10 64-bit<br>
+          • Processor: Intel i5-6600K / AMD Ryzen 5 2600<br>
+          • Memory: 8 GB RAM<br>
+          • Graphics: NVIDIA GTX 1060 / AMD RX 580<br>
+          • Storage: 50 GB available space<br><br>
+
+          <strong>Recommended Requirements:</strong><br>
+          • OS: Windows 11 64-bit<br>
+          • Processor: Intel i7-10700K / AMD Ryzen 7 3700X<br>
+          • Memory: 16 GB RAM<br>
+          • Graphics: NVIDIA RTX 3070 / AMD RX 6700 XT<br>
+          • Storage: 50 GB available space (SSD recommended)
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-category="beta">
+      <div class="faq-question" onclick="toggleFAQ(this)">
+        <span>How can I join the beta?</span>
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-content">
+          Beta access is currently limited to select testers. To apply for beta access:
+          <br><br>
+          1. Create an account on our website<br>
+          2. Complete the beta application form<br>
+          3. Wait for approval (usually 3-5 business days)<br>
+          4. If selected, you'll receive an email with download instructions<br><br>
+
+          We're gradually expanding beta access, so keep checking back!
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-category="gameplay">
+      <div class="faq-question" onclick="toggleFAQ(this)">
+        <span>Is there multiplayer support?</span>
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-content">
+          Yes! Project Darkwater features both single-player and cooperative multiplayer modes.
+          You can explore the depths alone or team up with up to 4 friends. Multiplayer features
+          include shared discoveries, synchronized exploration, and team-based puzzles.
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-category="account">
+      <div class="faq-question" onclick="toggleFAQ(this)">
+        <span>How do I reset my password?</span>
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-content">
+          To reset your password:<br><br>
+          1. Go to the login page<br>
+          2. Click "Forgot Password?"<br>
+          3. Enter your registered email address<br>
+          4. Check your email for reset instructions<br>
+          5. Follow the link to create a new password<br><br>
+
+          If you don't receive the email, check your spam folder or contact support.
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-category="gameplay">
+      <div class="faq-question" onclick="toggleFAQ(this)">
+        <span>Can I play offline?</span>
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-content">
+          Yes, Project Darkwater can be played offline in single-player mode. However, you'll need
+          an internet connection for initial activation, updates, and multiplayer features. Progress
+          made offline will sync when you reconnect.
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item" data-category="technical">
+      <div class="faq-question" onclick="toggleFAQ(this)">
+        <span>Will there be controller support?</span>
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-content">
+          Absolutely! Project Darkwater supports both keyboard/mouse and controller input.
+          We've optimized the game for Xbox and PlayStation controllers, with full button
+          remapping available in the settings menu.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Helpful Section -->
+  <div class="helpful-section">
+    <h2 class="helpful-title">Still have questions?</h2>
+    <p class="helpful-text">Our support team is here to help you with any questions not covered in the FAQ.</p>
+    <a href="mailto:support@projectdarkwater.com" class="contact-btn">Contact Support</a>
+  </div>
+</div>
+
+<!-- Back Button -->
+<a href="/" class="back-button">← Back to Home</a>
+
+<script>
+  // FAQ Toggle Function
+  function toggleFAQ(element) {
+    const faqItem = element.parentElement;
+    faqItem.classList.toggle('active');
+  }
+
+  // Category Filter Function
+  function filterFAQ(category) {
+    // Update active button
+    document.querySelectorAll('.category-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+
+    // Filter FAQ items
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+      if (category === 'all' || item.getAttribute('data-category') === category) {
+        item.style.display = 'block';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+
+  // Search Function
+  document.getElementById('faqSearch').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const faqItems = document.querySelectorAll('.faq-item');
+
+    faqItems.forEach(item => {
+      const question = item.querySelector('.faq-question span').textContent.toLowerCase();
+      const answer = item.querySelector('.faq-answer-content').textContent.toLowerCase();
+
+      if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+        item.style.display = 'block';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+</script>
+</body>
+</html>

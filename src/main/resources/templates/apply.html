@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Apply to Join the Crew - Project Darkwater</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Header */
+    .header {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      animation: slideDown 0.5s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    /* Main Content */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 60px 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 30px;
+      padding: 60px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-title {
+      font-size: 48px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 15px;
+    }
+
+    .hero-subtitle {
+      font-size: 20px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* Positions Grid */
+    .positions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .position-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      animation: fadeInUp 0.8s ease-out;
+      animation-fill-mode: both;
+    }
+
+    .position-card:nth-child(1) { animation-delay: 0.1s; }
+    .position-card:nth-child(2) { animation-delay: 0.2s; }
+    .position-card:nth-child(3) { animation-delay: 0.3s; }
+    .position-card:nth-child(4) { animation-delay: 0.4s; }
+
+    .position-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    .position-icon {
+      font-size: 36px;
+      margin-bottom: 15px;
+      display: block;
+    }
+
+    .position-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .position-description {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .position-requirements {
+      list-style: none;
+      margin-bottom: 20px;
+    }
+
+    .position-requirements li {
+      padding: 5px 0;
+      color: #555;
+      font-size: 14px;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .position-requirements li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #667eea;
+      font-weight: bold;
+    }
+
+    .apply-btn {
+      display: inline-block;
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .apply-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    /* Application Form Section */
+    .form-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 30px;
+      padding: 50px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+      display: none;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .form-section.show {
+      display: block;
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .form-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .form-subtitle {
+      color: #666;
+      font-size: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .form-submit {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 30px;
+    }
+
+    .form-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Back Button */
+    .back-button {
+      position: fixed;
+      top: 100px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 12px 20px;
+      border-radius: 25px;
+      text-decoration: none;
+      color: #667eea;
+      font-weight: 600;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      background: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .hero-section {
+        padding: 40px 30px;
+      }
+
+      .hero-title {
+        font-size: 36px;
+      }
+
+      .positions-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-section {
+        padding: 30px 20px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .back-button {
+        top: auto;
+        bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Header -->
+<div class="header">
+  <div class="nav-container">
+    <a href="/" class="logo">Project Darkwater</a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/login">Login</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <h1 class="hero-title">Join the Crew</h1>
+    <p class="hero-subtitle">Help us shape the future of Project Darkwater</p>
+  </section>
+
+  <!-- Open Positions -->
+  <div class="positions-grid" id="positionsGrid">
+    <div class="position-card" onclick="showApplicationForm('Support Staff')">
+      <span class="position-icon">🎫</span>
+      <h3 class="position-title">Support Staff</h3>
+      <p class="position-description">
+        Help players with their questions and issues. Be the friendly face of our community.
+      </p>
+      <ul class="position-requirements">
+        <li>Excellent communication skills</li>
+        <li>Patient and helpful attitude</li>
+        <li>Available 10+ hours per week</li>
+        <li>Gaming experience preferred</li>
+      </ul>
+      <a href="#" class="apply-btn">Apply Now</a>
+    </div>
+
+    <div class="position-card" onclick="showApplicationForm('Community Moderator')">
+      <span class="position-icon">👥</span>
+      <h3 class="position-title">Community Moderator</h3>
+      <p class="position-description">
+        Maintain a positive community environment and help enforce community guidelines.
+      </p>
+      <ul class="position-requirements">
+        <li>Experience with community management</li>
+        <li>Fair and impartial judgment</li>
+        <li>Active in gaming communities</li>
+        <li>Discord experience required</li>
+      </ul>
+      <a href="#" class="apply-btn">Apply Now</a>
+    </div>
+
+    <div class="position-card" onclick="showApplicationForm('Content Creator')">
+      <span class="position-icon">🎨</span>
+      <h3 class="position-title">Content Creator</h3>
+      <p class="position-description">
+        Create engaging content, videos, and streams to showcase Project Darkwater.
+      </p>
+      <ul class="position-requirements">
+        <li>Active content creation portfolio</li>
+        <li>Creative and self-motivated</li>
+        <li>Video editing skills</li>
+        <li>Social media savvy</li>
+      </ul>
+      <a href="#" class="apply-btn">Apply Now</a>
+    </div>
+
+    <div class="position-card" onclick="showApplicationForm('Beta Tester')">
+      <span class="position-icon">🔍</span>
+      <h3 class="position-title">Beta Tester</h3>
+      <p class="position-description">
+        Test new features and provide detailed feedback to improve the game.
+      </p>
+      <ul class="position-requirements">
+        <li>Attention to detail</li>
+        <li>Clear bug reporting skills</li>
+        <li>Various gaming platforms</li>
+        <li>Dedicated testing time</li>
+      </ul>
+      <a href="#" class="apply-btn">Apply Now</a>
+    </div>
+  </div>
+
+  <!-- Application Form -->
+  <section class="form-section" id="applicationForm">
+    <div class="form-header">
+      <h2 class="form-title">Application Form</h2>
+      <p class="form-subtitle">Position: <span id="positionName"></span></p>
+    </div>
+
+    <form onsubmit="submitApplication(event)">
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" class="form-input" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Discord Username</label>
+        <input type="text" class="form-input" placeholder="username#0000" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Time Zone</label>
+        <select class="form-select" required>
+          <option value="">Select your time zone</option>
+          <option value="PST">PST (Pacific)</option>
+          <option value="MST">MST (Mountain)</option>
+          <option value="CST">CST (Central)</option>
+          <option value="EST">EST (Eastern)</option>
+          <option value="GMT">GMT (Greenwich)</option>
+          <option value="CET">CET (Central European)</option>
+          <option value="JST">JST (Japan)</option>
+          <option value="AEST">AEST (Australian Eastern)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Why do you want to join the crew?</label>
+        <textarea class="form-textarea" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Relevant Experience</label>
+        <textarea class="form-textarea" required></textarea>
+      </div>
+
+      <button type="submit" class="form-submit">Submit Application</button>
+    </form>
+  </section>
+</div>
+
+<!-- Back Button -->
+<a href="/" class="back-button">← Back to Home</a>
+
+<script>
+  function showApplicationForm(position) {
+    document.getElementById('positionsGrid').style.display = 'none';
+    document.getElementById('applicationForm').classList.add('show');
+    document.getElementById('positionName').textContent = position;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function submitApplication(event) {
+    event.preventDefault();
+    alert('Thank you for your application! We\'ll review it and get back to you soon.');
+    // This would typically submit to your backend
+  }
+</script>
+</body>
+</html>

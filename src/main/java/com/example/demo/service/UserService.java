@@ -207,11 +207,17 @@ public class UserService {
         return convertToDto(user);
     }
 
-    // Get user by username
+    // Get user by username - FIXED to ensure data is loaded
     public UserResponseDto getUserByUsername(String username) {
+        System.out.println("getUserByUsername called with username: " + username);
+
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return convertToDto(user);
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+
+        UserResponseDto dto = convertToDto(user);
+        System.out.println("User found - Email: " + dto.getEmail() + ", Role: " + dto.getRole());
+
+        return dto;
     }
 
     // Validate user for login
@@ -293,6 +299,11 @@ public class UserService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy @ h:mm a 'EST'");
             dto.setFormattedCreatedAt(formatter.format(user.getCreatedAt()));
         }
+
+        System.out.println("convertToDto - Username: " + dto.getUsername());
+        System.out.println("convertToDto - Email: " + dto.getEmail());
+        System.out.println("convertToDto - Created: " + dto.getCreatedAt());
+        System.out.println("convertToDto - Formatted: " + dto.getFormattedCreatedAt());
 
         return dto;
     }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Home</title>
+  <title>Project Darkwater - Home</title>
   <style>
     * {
       margin: 0;
@@ -30,384 +30,1058 @@
       z-index: 1;
     }
 
-    /* Main Content Area */
-    .main-wrapper {
-      flex: 1;
+    /* Header/Navigation */
+    .header {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 20px 0;
+      position: relative;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
       position: relative;
       z-index: 2;
-      text-align: center;
+      padding: 40px 20px;
     }
 
-    /* Home Page Content Styles */
-    h2 {
-      background: rgba(255, 255, 255, 0.95);
-      padding: 30px 40px;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      max-width: 800px;
-      margin: 0 auto 30px;
-      text-align: center;
-      color: #333;
-      font-size: 28px;
-      font-weight: 600;
-      backdrop-filter: blur(10px);
-      animation: fadeInDown 0.5s ease-out;
-      position: relative;
-      z-index: 1;
-    }
-
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    h2 span {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      font-weight: 700;
-    }
-
-    h3 {
-      background: rgba(255, 255, 255, 0.95);
-      padding: 20px 40px;
-      border-radius: 20px 20px 0 0;
-      max-width: 600px;
+    .content-container {
+      max-width: 1200px;
       margin: 0 auto;
+    }
+
+    /* Welcome Section */
+    .welcome-section {
       text-align: center;
-      color: #333;
-      font-size: 22px;
-      font-weight: 600;
-      backdrop-filter: blur(10px);
-      position: relative;
-      z-index: 1;
+      margin-bottom: 50px;
     }
 
-    ul {
+    .welcome-title {
+      font-size: 48px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .welcome-subtitle {
+      font-size: 20px;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 30px;
+    }
+
+    /* Admin News Management Section */
+    .admin-news-section {
       background: rgba(255, 255, 255, 0.95);
-      padding: 0 40px 30px;
-      border-radius: 0 0 20px 20px;
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 40px;
+      backdrop-filter: blur(10px);
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      max-width: 600px;
-      margin: 0 auto 30px;
-      list-style: none;
-      backdrop-filter: blur(10px);
-      animation: slideUp 0.5s ease-out 0.2s both;
-      position: relative;
-      z-index: 1;
+      display: none;
     }
 
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    li {
-      margin: 10px 0;
-      position: relative;
-      overflow: hidden;
-    }
-
-    li a {
+    .admin-news-section.show {
       display: block;
-      padding: 18px 25px;
-      background: #f8f8f8;
-      border-radius: 12px;
-      color: #333;
-      text-decoration: none;
-      font-size: 16px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      position: relative;
-      border: 2px solid transparent;
     }
 
-    li a::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-      transition: left 0.5s ease;
-      z-index: -1;
+    .admin-tabs {
+      display: flex;
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 5px;
+      margin-bottom: 30px;
     }
 
-    li a:hover::before {
-      left: 0;
-    }
-
-    li a:hover {
-      transform: translateX(10px);
-      border-color: #667eea;
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
-    }
-
-    li a::after {
-      content: '→';
-      position: absolute;
-      right: 25px;
-      top: 50%;
-      transform: translateY(-50%);
-      opacity: 0;
-      transition: all 0.3s ease;
-    }
-
-    li a:hover::after {
-      opacity: 1;
-      right: 20px;
-    }
-
-    a[href="/logout"] {
-      display: inline-block;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 15px 40px;
-      border-radius: 12px;
-      color: #e74c3c;
-      text-decoration: none;
-      font-size: 16px;
+    .admin-tab {
+      flex: 1;
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
       font-weight: 600;
       transition: all 0.3s ease;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(10px);
-      z-index: 1;
+    }
+
+    .admin-tab.active {
+      background: #667eea;
+      color: white;
+    }
+
+    .admin-tab-content {
+      display: none;
+    }
+
+    .admin-tab-content.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e1e5e9;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5a6fd8;
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-warning {
+      background: #ffc107;
+      color: #333;
+    }
+
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
       margin-top: 20px;
     }
 
-    a[href="/logout"]:hover {
-      background: #e74c3c;
-      color: white;
-      transform: translateY(-2px);
-      box-shadow: 0 15px 30px rgba(231, 76, 60, 0.3);
+    .post-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
     }
 
-    a[href="/logout"]::before {
-      content: '⎋ ';
-      font-size: 18px;
-      vertical-align: middle;
+    .post-card:hover {
+      transform: translateY(-5px);
     }
 
-    /* Special styling for admin link */
-    li[th\:if="${isAdmin}"] a {
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-      border: 2px solid #667eea;
-      color: #667eea;
+    .post-title {
+      font-size: 16px;
       font-weight: 600;
+      margin-bottom: 10px;
+      color: #333;
     }
 
-    li[th\:if="${isAdmin}"] a:hover {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border-color: transparent;
+    .post-meta {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
     }
 
-    /* Footer Styles - Glass effect matching the theme */
-    footer {
-      background: rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(20px);
-      color: rgba(255, 255, 255, 0.9);
-      padding: 50px 20px 40px;
+    .post-badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .badge-news { background: #e3f2fd; color: #1976d2; }
+    .badge-patch { background: #f3e5f5; color: #7b1fa2; }
+    .badge-draft { background: #fff3e0; color: #f57c00; }
+    .badge-scheduled { background: #e8f5e8; color: #388e3c; }
+    .badge-published { background: #e1f5fe; color: #0277bd; }
+
+    .post-excerpt {
+      color: #666;
+      font-size: 13px;
+      line-height: 1.4;
+      margin-bottom: 15px;
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .post-actions .btn {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    /* News Carousel Section */
+    .news-carousel-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 40px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-title {
+      font-size: 32px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .carousel-container {
       position: relative;
       overflow: hidden;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      margin-top: auto;
+      border-radius: 15px;
     }
 
-    footer::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -50%;
-      width: 200%;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
-      animation: shimmer 3s infinite;
+    .carousel-track {
+      display: flex;
+      transition: transform 0.5s ease;
     }
 
-    @keyframes shimmer {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
-    }
-
-    .footer-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      text-align: center;
+    .carousel-slide {
+      min-width: 100%;
       position: relative;
-      z-index: 1;
+      background: #f8f8f8;
+      border-radius: 15px;
+      overflow: hidden;
+      height: 300px;
+      display: none;
     }
 
-    .footer-buttons {
+    .carousel-slide.active {
+      display: block;
+    }
+
+    .slide-content {
+      padding: 40px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .slide-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .slide-excerpt {
+      font-size: 16px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .slide-date {
+      font-size: 14px;
+      color: #888;
+      font-weight: 500;
+    }
+
+    .carousel-nav {
       display: flex;
       justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .carousel-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ddd;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .carousel-dot.active {
+      background: #667eea;
+      transform: scale(1.2);
+    }
+
+    /* Split Section - Patch Notes & Play Button */
+    .split-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 30px;
       margin-bottom: 40px;
-      flex-wrap: wrap;
     }
 
-    .footer-button {
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      padding: 18px 45px;
-      border-radius: 35px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 16px;
-      transition: all 0.3s ease;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .footer-button:hover {
-      background: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.4);
-      transform: translateY(-3px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    }
-
-    .social-icons {
-      display: flex;
-      justify-content: center;
-      gap: 25px;
-      margin-top: 40px;
-      padding-top: 40px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .social-icon {
-      width: 50px;
-      height: 50px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      color: white;
-      font-size: 22px;
-      backdrop-filter: blur(10px);
-    }
-
-    .social-icon:hover {
+    .patch-notes-panel {
       background: rgba(255, 255, 255, 0.95);
-      color: #667eea;
-      transform: translateY(-5px) rotate(360deg);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      border-radius: 20px;
+      padding: 40px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     }
 
-    .social-icon.disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
+    .patch-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
     }
 
-    .social-icon.disabled:hover {
-      background: rgba(255, 255, 255, 0.1);
+    .patch-version {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      transform: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 20px;
     }
 
-    /* Responsive design */
+    .patch-content {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .patch-date {
+      font-size: 14px;
+      color: #888;
+      font-weight: 500;
+    }
+
+    .play-panel {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 40px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .play-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 50px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-size: 24px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .play-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+    }
+
+    .play-description {
+      color: #666;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* About Section */
+    .about-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 50px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .about-title {
+      font-size: 36px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .about-description {
+      font-size: 18px;
+      color: #666;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .about-button {
+      background: transparent;
+      color: #667eea;
+      padding: 16px 40px;
+      border: 2px solid #667eea;
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .about-button:hover {
+      background: #667eea;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Placeholder for non-functional carousel */
+    .carousel-placeholder {
+      text-align: center;
+      padding: 60px;
+      color: #666;
+      font-style: italic;
+    }
+
+    /* Mobile Responsive */
     @media (max-width: 768px) {
-      .main-wrapper {
-        padding: 20px;
+      .welcome-title {
+        font-size: 36px;
       }
 
-      h2 {
-        font-size: 24px;
-        padding: 25px 30px;
+      .split-section {
+        grid-template-columns: 1fr;
       }
 
-      h3 {
-        font-size: 20px;
-        padding: 15px 30px;
+      .news-carousel-section,
+      .patch-notes-panel,
+      .play-panel,
+      .about-section {
+        padding: 30px 25px;
       }
 
-      ul {
-        padding: 0 30px 25px;
+      .nav-links {
+        display: none;
       }
 
-      li a {
-        padding: 15px 20px;
-        font-size: 15px;
+      .form-row {
+        grid-template-columns: 1fr;
       }
 
-      .footer-buttons {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .social-icons {
-        gap: 15px;
-      }
-
-      .social-icon {
-        width: 45px;
-        height: 45px;
-        font-size: 20px;
+      .posts-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
+<!-- Header -->
+<div class="header">
+  <div class="nav-container">
+    <a href="/home" class="logo">Project Darkwater</a>
 
-<!-- Main Content - Your Original Home Content -->
-<div class="main-wrapper">
-  <div style="width: 100%;">
-    <h2>Welcome, <span th:text="${username}"></span>!</h2>
-
-    <h3>Menu</h3>
-    <ul>
-      <li><a href="/profile">My Profile</a></li>
-      <li><a href="/content">View Content</a></li>
-      <li><a href="/api-docs">API Documentation</a></li>
-      <li th:if="${isAdmin}"><a href="/admin">Admin Dashboard</a></li>
+    <ul class="nav-links">
+      <li><a href="/profile">Profile</a></li>
+      <li><a href="/content">Content</a></li>
+      <li><a href="/api-docs">API Docs</a></li>
+      <li th:if="${isAdmin}"><a href="/admin">Admin</a></li>
+      <li th:if="${isAdmin || isSupportStaff || isModerator}">
+        <a href="/staff">Staff Panel</a>
+      </li>
+      <li th:unless="${isAdmin || isSupportStaff || isModerator}">
+        <a href="/apply">Apply</a>
+      </li>
+      <li><a href="/logout">Logout</a></li>
     </ul>
-
-    <br>
-    <a href="/logout">Logout</a>
   </div>
 </div>
 
-<!-- Footer -->
-<footer>
-  <div class="footer-container">
-    <div class="footer-buttons">
-      <a href="#" class="footer-button">About Us</a>
-      <a href="mailto:operations@projectdarkwater.com" class="footer-button">Contact Us</a>
-      <a href="#" class="footer-button">Apply</a>
+<!-- Main Content -->
+<div class="main-content">
+  <div class="content-container">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+      <h1 class="welcome-title">Welcome, <span th:text="${username}"></span>!</h1>
+      <p class="welcome-subtitle">Dive into the depths of adventure and discovery</p>
+      <!-- Admin News Management Toggle -->
+      <div th:if="${isAdmin}">
+        <button onclick="toggleNewsManagement()" class="btn btn-primary" style="margin-top: 20px;">
+          Manage News & Patch Notes
+        </button>
+      </div>
     </div>
-    <div class="social-icons">
-      <a href="https://facebook.com" class="social-icon" title="Facebook">f</a>
-      <a href="https://instagram.com" class="social-icon" title="Instagram">📷</a>
-      <a href="https://bsky.app" class="social-icon" title="Bluesky">☁️</a>
-      <a href="https://youtube.com" class="social-icon" title="YouTube">▶️</a>
-      <a href="https://twitch.tv" class="social-icon" title="Twitch">🎮</a>
-      <a href="#" class="social-icon disabled" title="Discord (Coming Soon)">💬</a>
-    </div>
-  </div>
-</footer>
 
+    <!-- Admin News Management Section (Only visible to admins) -->
+    <section th:if="${isAdmin}" class="admin-news-section" id="newsManagement">
+      <h2 class="section-title">News & Patch Notes Management</h2>
+
+      <!-- Admin Tabs -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="showAdminTab('create')">Create New Post</button>
+        <button class="admin-tab" onclick="showAdminTab('drafts')">Drafts</button>
+        <button class="admin-tab" onclick="showAdminTab('scheduled')">Scheduled</button>
+        <button class="admin-tab" onclick="showAdminTab('published')">Published</button>
+      </div>
+
+      <!-- Create New Post Tab -->
+      <div id="create-tab" class="admin-tab-content active">
+        <form id="post-form">
+          <div class="form-group">
+            <label class="form-label">Post Type</label>
+            <select class="form-select" id="type" required>
+              <option value="">Select type...</option>
+              <option value="NEWS">News Article</option>
+              <option value="PATCH_NOTES">Patch Notes</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input type="text" class="form-input" id="title" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Excerpt (for carousel)</label>
+            <textarea class="form-textarea" id="excerpt" placeholder="Short summary for carousel display..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Content</label>
+            <textarea class="form-textarea" id="content" required style="min-height: 200px;"></textarea>
+          </div>
+
+          <div class="form-row" id="patch-fields" style="display: none;">
+            <div class="form-group">
+              <label class="form-label">Version Number</label>
+              <input type="text" class="form-input" id="versionNumber" placeholder="e.g., 1.2.3">
+            </div>
+            <div class="form-group">
+              <div class="checkbox-group">
+                <input type="checkbox" id="majorRelease">
+                <label class="form-label">Major Release</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Featured Image URL</label>
+              <input type="url" class="form-input" id="featuredImage">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tags (comma-separated)</label>
+              <input type="text" class="form-input" id="tags" placeholder="release, major, bugfix">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Schedule Date & Time (optional)</label>
+            <input type="datetime-local" class="form-input" id="scheduledDate">
+            <small style="color: #666; font-size: 12px;">Leave empty to save as draft. Posts are published anonymously with only date/time information.</small>
+          </div>
+
+          <div style="display: flex; gap: 15px; margin-top: 30px;">
+            <button type="button" class="btn btn-secondary" onclick="saveDraft()">Save as Draft</button>
+            <button type="button" class="btn btn-warning" onclick="schedulePost()">Schedule Post</button>
+            <button type="button" class="btn btn-success" onclick="publishNow()">Publish Now</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Drafts Tab -->
+      <div id="drafts-tab" class="admin-tab-content">
+        <h3>Draft Posts</h3>
+        <div class="posts-grid" id="drafts-grid">
+          <!-- Draft posts will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Scheduled Tab -->
+      <div id="scheduled-tab" class="admin-tab-content">
+        <h3>Scheduled Posts</h3>
+        <div class="posts-grid" id="scheduled-grid">
+          <!-- Scheduled posts will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Published Tab -->
+      <div id="published-tab" class="admin-tab-content">
+        <h3>Published Posts</h3>
+        <div class="posts-grid" id="published-grid">
+          <!-- Published posts will be loaded here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- News Carousel Section -->
+    <section class="news-carousel-section">
+      <h2 class="section-title">Latest News</h2>
+      <div class="carousel-container">
+        <!-- Show real news if available -->
+        <div th:if="${carouselNews != null and !carouselNews.isEmpty()}" class="carousel-track" id="carouselTrack">
+          <div th:each="news, iterStat : ${carouselNews}"
+               th:class="${iterStat.index == 0} ? 'carousel-slide active' : 'carousel-slide'">
+            <div class="slide-content">
+              <h3 class="slide-title" th:text="${news.title}">News Title</h3>
+              <p class="slide-excerpt" th:text="${news.excerpt ?: #strings.substring(news.content, 0, 150) + '...'}">News excerpt...</p>
+              <span class="slide-date" th:text="${#temporals.format(news.publishedDate, 'MMMM dd, yyyy')}">Date</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fallback placeholder if no news -->
+        <div th:if="${carouselNews == null or carouselNews.isEmpty()}" class="carousel-placeholder">
+          <p>Welcome to Project Darkwater's news center!</p>
+          <p>Our PR team can create, schedule, and publish news articles and patch notes.</p>
+          <p>All posts are managed with complete anonymity - only date and time information is displayed.</p>
+        </div>
+      </div>
+
+      <!-- Carousel navigation -->
+      <div th:if="${carouselNews != null and carouselNews.size() > 1}" class="carousel-nav" id="carouselNav">
+        <span th:each="news, iterStat : ${carouselNews}"
+              th:class="${iterStat.index == 0} ? 'carousel-dot active' : 'carousel-dot'"
+              th:onclick="'showSlide(' + ${iterStat.index} + ')'"></span>
+      </div>
+    </section>
+
+    <!-- Split Section: Patch Notes & Play Button -->
+    <div class="split-section">
+      <!-- Patch Notes Panel -->
+      <div class="patch-notes-panel">
+        <h3 class="patch-title">Latest Patch Notes</h3>
+
+        <!-- Show real patch notes if available -->
+        <div th:if="${latestPatch != null}">
+          <span class="patch-version" th:text="'v' + ${latestPatch.versionNumber}">v1.0.0</span>
+          <div class="patch-content">
+            <p th:text="${latestPatch.excerpt ?: #strings.substring(latestPatch.content, 0, 200) + '...'}">Patch content...</p>
+          </div>
+          <div class="patch-date" th:text="'Release Date: ' + ${#temporals.format(latestPatch.publishedDate, 'MMMM dd, yyyy')}">Release Date: Coming Soon</div>
+        </div>
+
+        <!-- Fallback placeholder if no patch notes -->
+        <div th:if="${latestPatch == null}" class="patch-placeholder">
+          <span class="patch-version">v1.0.0</span>
+          <div class="patch-content">
+            <p>Patch notes system is ready! Our PR team can create version-specific patch notes with scheduling capabilities. All posts maintain complete anonymity with only date and time information.</p>
+          </div>
+          <div class="patch-date">Release Date: Coming Soon</div>
+        </div>
+      </div>
+
+      <!-- Play Button Panel -->
+      <div class="play-panel">
+        <a href="#" class="play-button">Play Now</a>
+        <p class="play-description">
+          Jump into Project Darkwater and experience the latest updates and features.
+          Your adventure awaits in the depths!
+        </p>
+      </div>
+    </div>
+
+    <!-- About Section -->
+    <section class="about-section">
+      <h2 class="about-title">Want to know more about Project Darkwater?</h2>
+      <p class="about-description">
+        Discover the depths of our underwater adventure game. Learn about our vision,
+        the development team, and the immersive world we're creating for players worldwide.
+      </p>
+      <a href="/about" class="about-button">Read "About Us" here!</a>
+    </section>
+  </div>
+</div>
+
+<script>
+  let currentSlide = 0;
+  let editingPostId = null;
+
+  // Carousel functionality
+  const slides = document.querySelectorAll('.carousel-slide');
+  const dots = document.querySelectorAll('.carousel-dot');
+
+  function showSlide(index) {
+    if (slides.length === 0) return;
+
+    slides.forEach(slide => slide.classList.remove('active'));
+    dots.forEach(dot => dot.classList.remove('active'));
+
+    if (slides[index]) {
+      slides[index].classList.add('active');
+      if (dots[index]) dots[index].classList.add('active');
+    }
+
+    currentSlide = index;
+  }
+
+  function nextSlide() {
+    if (slides.length === 0) return;
+    currentSlide = (currentSlide + 1) % slides.length;
+    showSlide(currentSlide);
+  }
+
+  // News Management Functions
+  function toggleNewsManagement() {
+    const section = document.getElementById('newsManagement');
+    section.classList.toggle('show');
+    if (section.classList.contains('show')) {
+      loadPosts('DRAFT');
+    }
+  }
+
+  function showAdminTab(tabName) {
+    document.querySelectorAll('.admin-tab-content').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    document.querySelectorAll('.admin-tab').forEach(btn => {
+      btn.classList.remove('active');
+    });
+
+    document.getElementById(tabName + '-tab').classList.add('active');
+    event.target.classList.add('active');
+
+    if (tabName === 'drafts') loadPosts('DRAFT');
+    if (tabName === 'scheduled') loadPosts('SCHEDULED');
+    if (tabName === 'published') loadPosts('PUBLISHED');
+  }
+
+  // Show/hide patch-specific fields
+  document.addEventListener('DOMContentLoaded', function() {
+    const typeSelect = document.getElementById('type');
+    if (typeSelect) {
+      typeSelect.addEventListener('change', function() {
+        const patchFields = document.getElementById('patch-fields');
+        if (this.value === 'PATCH_NOTES') {
+          patchFields.style.display = 'grid';
+        } else {
+          patchFields.style.display = 'none';
+        }
+      });
+    }
+
+    // Initialize carousel
+    if (slides.length > 1) {
+      setInterval(nextSlide, 5000);
+    }
+  });
+
+  // Save as draft
+  async function saveDraft() {
+    const postData = getFormData();
+    postData.status = 'DRAFT';
+    await savePost(postData);
+  }
+
+  // Schedule post
+  async function schedulePost() {
+    const scheduledDate = document.getElementById('scheduledDate').value;
+    if (!scheduledDate) {
+      alert('Please select a date and time to schedule the post.');
+      return;
+    }
+
+    const postData = getFormData();
+    postData.scheduledDate = scheduledDate;
+    await savePost(postData);
+  }
+
+  // Publish immediately
+  async function publishNow() {
+    const postData = getFormData();
+    const response = await savePost(postData);
+
+    if (response && response.id) {
+      await fetch(`/api/news/${response.id}/publish`, { method: 'POST' });
+      showAlert('Post published successfully!', 'success');
+      clearForm();
+      // Refresh page to show new content
+      setTimeout(() => window.location.reload(), 1000);
+    }
+  }
+
+  // Get form data
+  function getFormData() {
+    return {
+      title: document.getElementById('title').value,
+      content: document.getElementById('content').value,
+      excerpt: document.getElementById('excerpt').value,
+      type: document.getElementById('type').value,
+      versionNumber: document.getElementById('versionNumber').value,
+      isMajorRelease: document.getElementById('majorRelease').checked,
+      featuredImage: document.getElementById('featuredImage').value,
+      tags: document.getElementById('tags').value,
+      scheduledDate: document.getElementById('scheduledDate').value || null
+    };
+  }
+
+  // Save post
+  async function savePost(postData) {
+    try {
+      const url = editingPostId ? `/api/news/${editingPostId}` : '/api/news';
+      const method = editingPostId ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(postData)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        showAlert('Post saved successfully!', 'success');
+        clearForm();
+        return result;
+      } else {
+        showAlert('Error saving post. Please try again.', 'error');
+      }
+    } catch (error) {
+      showAlert('Error saving post: ' + error.message, 'error');
+    }
+  }
+
+  // Load posts by status
+  async function loadPosts(status) {
+    try {
+      const response = await fetch(`/api/news/admin/status/${status}?size=20`);
+      const data = await response.json();
+      displayPosts(data.content, status.toLowerCase());
+    } catch (error) {
+      console.error('Error loading posts:', error);
+    }
+  }
+
+  // Display posts in grid
+  function displayPosts(posts, containerSuffix) {
+    const container = document.getElementById(containerSuffix + '-grid');
+    container.innerHTML = '';
+
+    posts.forEach(post => {
+      const postCard = createPostCard(post);
+      container.appendChild(postCard);
+    });
+  }
+
+  // Create post card element
+  function createPostCard(post) {
+    const card = document.createElement('div');
+    card.className = 'post-card';
+
+    const badgeClass = post.type === 'NEWS' ? 'badge-news' : 'badge-patch';
+    const statusBadge = `badge-${post.status.toLowerCase()}`;
+
+    card.innerHTML = `
+      <div class="post-title">${post.title}</div>
+      <div class="post-meta">
+        <span class="post-badge ${badgeClass}">${post.type}</span>
+        <span class="post-badge ${statusBadge}">${post.status}</span>
+        ${post.isMajorRelease ? '<span class="post-badge" style="background: #ffecb3; color: #f57f17;">MAJOR</span>' : ''}
+      </div>
+      <div class="post-excerpt">${post.excerpt || post.content.substring(0, 80) + '...'}</div>
+      <div class="post-actions">
+        <button class="btn btn-primary" onclick="editPost(${post.id})">Edit</button>
+        ${post.status === 'DRAFT' ? `<button class="btn btn-success" onclick="publishPost(${post.id})">Publish</button>` : ''}
+        <button class="btn btn-danger" onclick="deletePost(${post.id})">Delete</button>
+      </div>
+    `;
+
+    return card;
+  }
+
+  // Edit post
+  async function editPost(id) {
+    try {
+      const response = await fetch(`/api/news/${id}`);
+      const post = await response.json();
+
+      document.getElementById('title').value = post.title;
+      document.getElementById('content').value = post.content;
+      document.getElementById('excerpt').value = post.excerpt || '';
+      document.getElementById('type').value = post.type;
+      document.getElementById('versionNumber').value = post.versionNumber || '';
+      document.getElementById('majorRelease').checked = post.isMajorRelease;
+      document.getElementById('featuredImage').value = post.featuredImage || '';
+      document.getElementById('tags').value = post.tags || '';
+
+      if (post.scheduledDate) {
+        const date = new Date(post.scheduledDate);
+        document.getElementById('scheduledDate').value = date.toISOString().slice(0, 16);
+      }
+
+      if (post.type === 'PATCH_NOTES') {
+        document.getElementById('patch-fields').style.display = 'grid';
+      }
+
+      editingPostId = id;
+      showAdminTab('create');
+
+    } catch (error) {
+      showAlert('Error loading post for editing: ' + error.message, 'error');
+    }
+  }
+
+  // Publish post
+  async function publishPost(id) {
+    try {
+      await fetch(`/api/news/${id}/publish`, { method: 'POST' });
+      showAlert('Post published successfully!', 'success');
+      loadPosts('DRAFT');
+      // Refresh page to show new content
+      setTimeout(() => window.location.reload(), 1000);
+    } catch (error) {
+      showAlert('Error publishing post: ' + error.message, 'error');
+    }
+  }
+
+  // Delete post
+  async function deletePost(id) {
+    if (!confirm('Are you sure you want to delete this post?')) return;
+
+    try {
+      await fetch(`/api/news/${id}`, { method: 'DELETE' });
+      showAlert('Post deleted successfully!', 'success');
+
+      // Refresh current tab
+      const activeTab = document.querySelector('.admin-tab.active');
+      if (activeTab) {
+        const tabText = activeTab.textContent.toLowerCase();
+        if (tabText.includes('draft')) loadPosts('DRAFT');
+        if (tabText.includes('scheduled')) loadPosts('SCHEDULED');
+        if (tabText.includes('published')) loadPosts('PUBLISHED');
+      }
+    } catch (error) {
+      showAlert('Error deleting post: ' + error.message, 'error');
+    }
+  }
+
+  // Clear form
+  function clearForm() {
+    document.getElementById('post-form').reset();
+    document.getElementById('patch-fields').style.display = 'none';
+    editingPostId = null;
+  }
+
+  // Show alert
+  function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type}`;
+    alertDiv.textContent = message;
+
+    const container = document.querySelector('.content-container');
+    container.insertBefore(alertDiv, container.firstChild);
+
+    setTimeout(() => alertDiv.remove(), 5000);
+  }
+</script>
 </body>
 </html>

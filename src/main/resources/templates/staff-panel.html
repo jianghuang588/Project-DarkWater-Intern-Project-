@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Staff Panel - Project Darkwater</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 60px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.3; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .role-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Staff Grid */
+        .staff-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .staff-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .staff-card:nth-child(1) { animation-delay: 0.1s; }
+        .staff-card:nth-child(2) { animation-delay: 0.2s; }
+        .staff-card:nth-child(3) { animation-delay: 0.3s; }
+        .staff-card:nth-child(4) { animation-delay: 0.4s; }
+        .staff-card:nth-child(5) { animation-delay: 0.5s; }
+        .staff-card:nth-child(6) { animation-delay: 0.6s; }
+
+        .staff-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .staff-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .card-link {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .card-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: #f8f8f8;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Back Button */
+        .back-button {
+            position: fixed;
+            top: 100px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 40px 30px;
+            }
+
+            .hero-title {
+                font-size: 36px;
+            }
+
+            .staff-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .back-button {
+                top: auto;
+                bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<div class="header">
+    <div class="nav-container">
+        <a href="/" class="logo">Project Darkwater</a>
+        <ul class="nav-links">
+            <li><a href="/home">Home</a></li>
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1 class="hero-title">Staff Panel</h1>
+        <p class="hero-subtitle">Welcome back, <span th:text="${username}"></span>!</p>
+        <span class="role-badge" th:text="${userRole}">STAFF</span>
+    </section>
+
+    <!-- Quick Stats -->
+    <section class="stats-section">
+        <h2 style="font-size: 28px; color: #333; text-align: center;">Today's Overview</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-value">127</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">15</div>
+                <div class="stat-label">Open Tickets</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Pending Reviews</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">98.5%</div>
+                <div class="stat-label">Server Uptime</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Staff Tools Grid -->
+    <div class="staff-grid">
+        <!-- Admin Panel (for admins only) -->
+        <div class="staff-card" th:if="${userRole == 'ADMIN' || userRole == 'SUPER_ADMIN'}">
+            <span class="card-icon">👨‍💼</span>
+            <h3 class="card-title">Admin Dashboard</h3>
+            <p class="card-description">
+                Manage users, view system logs, and configure application settings.
+            </p>
+            <a href="/admin" class="card-link">Open Admin Panel</a>
+        </div>
+
+        <!-- Support Tickets -->
+        <div class="staff-card">
+            <span class="card-icon">🎫</span>
+            <h3 class="card-title">Support Tickets</h3>
+            <p class="card-description">
+                View and respond to customer support tickets and inquiries.
+            </p>
+            <a href="/api/support/tickets/all" class="card-link">Manage Tickets</a>
+        </div>
+
+        <!-- News Management -->
+        <div class="staff-card" th:if="${userRole == 'ADMIN' || userRole == 'SUPER_ADMIN' || userRole == 'MODERATOR'}">
+            <span class="card-icon">📰</span>
+            <h3 class="card-title">News & Updates</h3>
+            <p class="card-description">
+                Create and manage news posts, patch notes, and announcements.
+            </p>
+            <a href="/admin/news" class="card-link">Manage News</a>
+        </div>
+
+        <!-- User Reports -->
+        <div class="staff-card" th:if="${userRole == 'MODERATOR' || userRole == 'ADMIN' || userRole == 'SUPER_ADMIN'}">
+            <span class="card-icon">📊</span>
+            <h3 class="card-title">User Reports</h3>
+            <p class="card-description">
+                Review user reports and moderate community content.
+            </p>
+            <a href="#" class="card-link">View Reports</a>
+        </div>
+
+        <!-- Analytics -->
+        <div class="staff-card">
+            <span class="card-icon">📈</span>
+            <h3 class="card-title">Analytics</h3>
+            <p class="card-description">
+                View game statistics, user engagement, and performance metrics.
+            </p>
+            <a href="#" class="card-link">View Analytics</a>
+        </div>
+
+        <!-- Documentation -->
+        <div class="staff-card">
+            <span class="card-icon">📚</span>
+            <h3 class="card-title">Staff Documentation</h3>
+            <p class="card-description">
+                Access internal documentation, procedures, and guidelines.
+            </p>
+            <a href="#" class="card-link">View Docs</a>
+        </div>
+    </div>
+</div>
+
+<!-- Back Button -->
+<a href="/home" class="back-button">← Back to Home</a>
+
+<script>
+    // Refresh stats every 30 seconds
+    setInterval(() => {
+        // This would typically fetch updated stats from your API
+        console.log('Refreshing stats...');
+    }, 30000);
+
+    // Add click tracking for analytics
+    document.querySelectorAll('.card-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            const action = this.textContent;
+            console.log('Staff action:', action);
+            // Track staff actions for analytics
+        });
+    });
+</script>
+</body>
+</html>

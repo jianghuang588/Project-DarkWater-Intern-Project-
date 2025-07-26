@@ -4,11 +4,22 @@ import com.example.demo.dto.ChangePasswordDto;
 import com.example.demo.dto.UpdateProfileDto;
 import com.example.demo.dto.UserResponseDto;
 import com.example.demo.service.UserService;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.user.User;
+import com.example.demo.user.UserRole;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import com.example.demo.dto.NewsPostDto;
+import com.example.demo.service.NewsService;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Main MVC controller for web pages
@@ -21,12 +32,50 @@ public class MainController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private NewsService newsService;
+
+
+
     /**
-     * Home page - redirects to login
+     * Modified home page - check for splash screen first
      */
     @GetMapping("/")
-    public String index() {
-        return "redirect:/login";
+    public String index(HttpServletRequest request, HttpServletResponse response) {
+        // Check if splash should be shown
+        Cookie[] cookies = request.getCookies();
+        boolean splashShown = false;
+        boolean splashDisabled = false;
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("splashShown".equals(cookie.getName()) && "true".equals(cookie.getValue())) {
+                    splashShown = true;
+                }
+                if ("splashDisabled".equals(cookie.getName()) && "true".equals(cookie.getValue())) {
+                    splashDisabled = true;
+                }
+            }
+        }
+
+        // If splash is disabled or was shown recently, go to home
+        if (splashDisabled || splashShown) {
+            return "redirect:/home";
+        }
+
+        // Otherwise show splash
+        return "redirect:/splash";
+    }
+
+    /**
+     * Splash screen - shows periodically based on cookies
+     */
+    @GetMapping("/splash")
+    public String splashPage() {
+        return "splash";
     }
 
     /**
@@ -36,6 +85,7 @@ public class MainController {
     public String loginPage() {
         return "login";
     }
+
 
     /**
      * Process login form submission
@@ -102,20 +152,63 @@ public class MainController {
         return "redirect:/register?error=exists";
     }
 
-    /**
-     * Protected home page - requires login
-     * @param session - check if user is logged in
-     * @param model - pass username to view
-     */
     @GetMapping("/home")
     public String home(HttpSession session, Model model) {
         String username = (String) session.getAttribute("username");
         if (username == null) {
             return "redirect:/login";
         }
+
         model.addAttribute("username", username);
+
+        // Check if user has any staff role
+        boolean isAdmin = false;
+        boolean isSupportStaff = false;
+        boolean isModerator = false;
+
+        try {
+            User user = userRepository.findByUsername(username).orElse(null);
+            if (user != null) {
+                UserRole role = user.getRole();
+
+                // DEBUG OUTPUT - ADD THESE LINES
+                System.out.println("DEBUG: User " + username + " has role: " + role);
+                System.out.println("DEBUG: Available roles: " + java.util.Arrays.toString(UserRole.values()));
+
+                isAdmin = (role == UserRole.ADMIN || role == UserRole.SUPER_ADMIN);
+
+                // DEBUG OUTPUT - ADD THIS LINE
+                System.out.println("DEBUG: isAdmin = " + isAdmin);
+
+                isSupportStaff = (role == UserRole.SUPPORT_STAFF);
+                isModerator = (role == UserRole.MODERATOR);
+            } else {
+                System.out.println("DEBUG: User not found in database!");
+            }
+        } catch (Exception e) {
+            System.out.println("DEBUG: Error checking role: " + e.getMessage());
+        }
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("isSupportStaff", isSupportStaff);
+        model.addAttribute("isModerator", isModerator);
+
+        // Add news data for home page
+        try {
+            List<NewsPostDto> carouselNews = newsService.getRecentNewsForCarousel();
+            model.addAttribute("carouselNews", carouselNews);
+
+            NewsPostDto latestPatch = newsService.getLatestMajorPatchNote();
+            model.addAttribute("latestPatch", latestPatch);
+        } catch (Exception e) {
+            model.addAttribute("carouselNews", new ArrayList<>());
+            model.addAttribute("latestPatch", null);
+        }
+
         return "home";
     }
+
+
 
     /**
      * Protected content page
@@ -205,6 +298,23 @@ public class MainController {
     }
 
     /**
+     * Admin news management page - requires admin role
+     */
+    @GetMapping("/admin/news")
+    public String adminNewsPage(HttpSession session, Model model) {
+        String username = (String) session.getAttribute("username");
+        if (username == null) {
+            return "redirect:/login";
+        }
+        // Check admin privileges
+        if (!userService.isAdmin(username)) {
+            return "redirect:/home";
+        }
+        model.addAttribute("username", username);
+        return "admin-news";
+    }
+
+    /**
      * User profile page - displays current user info
      */
     @GetMapping("/profile")
@@ -272,9 +382,6 @@ public class MainController {
         }
     }
 
-
-
-
     /**
      * Change password page
      */
@@ -315,6 +422,122 @@ public class MainController {
             return "redirect:/profile?passwordChanged=true";
         } catch (Exception e) {
             return "redirect:/profile/change-password?error=invalid";
+        }
+    }
+
+    /**
+     * About Project Darkwater page
+     */
+    @GetMapping("/about")
+    public String aboutPage() {
+        return "about";
+    }
+
+    /**
+     * FAQ page
+     */
+    @GetMapping("/faq")
+    public String faqPage() {
+        return "faq";
+    }
+
+    /**
+     * Interactive Roadmap page
+     */
+    @GetMapping("/roadmap")
+    public String roadmapPage() {
+        return "roadmap";
+    }
+
+    /**
+     * News page - Blog-post style news articles
+     */
+    @GetMapping("/news")
+    public String newsPage() {
+        return "news";
+    }
+
+    /**
+     * Release Notes page - Game updates and patch notes
+     */
+    @GetMapping("/release-notes")
+    public String releaseNotesPage() {
+        return "release-notes";
+    }
+
+    /**
+     * Staff Panel page - for crew members only
+     */
+    @GetMapping("/staff")
+    public String staffPanel(HttpSession session, Model model) {
+        String username = (String) session.getAttribute("username");
+        if (username == null) {
+            return "redirect:/login";
+        }
+
+        // Check if user has staff privileges
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            return "redirect:/home";
+        }
+
+        UserRole role = user.getRole();
+        boolean hasStaffAccess = (role == UserRole.ADMIN ||
+                role == UserRole.SUPER_ADMIN ||
+                role == UserRole.SUPPORT_STAFF ||
+                role == UserRole.MODERATOR);
+
+        if (!hasStaffAccess) {
+            return "redirect:/home";
+        }
+
+        model.addAttribute("username", username);
+        model.addAttribute("userRole", role.toString());
+        return "staff-panel";
+    }
+
+    /**
+     * Apply page - for non-staff users
+     */
+    @GetMapping("/apply")
+    public String applyPage() {
+        return "apply";
+    }
+
+    /**
+     * Play page - Game launcher or download page
+     */
+    @GetMapping("/play")
+    public String playPage() {
+        return "play";
+    }
+
+    /**
+     * Help page
+     */
+    @GetMapping("/help")
+    public String helpPage() {
+        return "help";
+    }
+
+    /**
+     * Settings page - account and app preferences
+     */
+    @GetMapping("/settings")
+    public String settingsPage(HttpSession session, Model model) {
+        String username = (String) session.getAttribute("username");
+        if (username == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            UserResponseDto user = userService.getUserByUsername(username);
+            model.addAttribute("username", username);
+            model.addAttribute("user", user);
+            return "settings";  // This will look for settings.html template
+        } catch (Exception e) {
+            System.err.println("Error loading user for settings: " + username + " - " + e.getMessage());
+            return "redirect:/profile?error=Could not load settings";
         }
     }
 }
