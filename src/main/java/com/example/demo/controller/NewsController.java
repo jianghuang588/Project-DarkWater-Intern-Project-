@@ -4,11 +4,14 @@ import com.example.demo.Enum.PostType;
 import com.example.demo.Enum.PostStatus;
 import com.example.demo.dto.NewsPostDto;
 import com.example.demo.service.NewsService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +27,23 @@ public class NewsController {
 
     @Autowired
     private NewsService newsService;
+
+
+    @GetMapping("/debug-auth")
+    public ResponseEntity<String> debugAuth(HttpServletRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String sessionId = request.getSession(false) != null ? request.getSession().getId() : "No session";
+
+        StringBuilder debug = new StringBuilder();
+        debug.append("Session ID: ").append(sessionId).append("\n");
+        debug.append("Authentication: ").append(auth != null ? auth.toString() : "null").append("\n");
+        debug.append("Principal: ").append(auth != null ? auth.getName() : "null").append("\n");
+        debug.append("Authorities: ").append(auth != null ? auth.getAuthorities() : "null").append("\n");
+        debug.append("Is Authenticated: ").append(auth != null ? auth.isAuthenticated() : "false").append("\n");
+
+        return ResponseEntity.ok(debug.toString());
+    }
+
 
     /**
      * Create new post (draft by default)

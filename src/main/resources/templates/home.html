@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Project Darkwater - Home</title>
+  <!-- CSRF disabled in security config -->
   <style>
     * {
       margin: 0;
@@ -346,11 +347,6 @@
       border-radius: 15px;
     }
 
-    .carousel-track {
-      display: flex;
-      transition: transform 0.5s ease;
-    }
-
     .carousel-slide {
       min-width: 100%;
       position: relative;
@@ -617,7 +613,7 @@
       <!-- Admin News Management Toggle -->
       <div th:if="${isAdmin}">
         <button onclick="toggleNewsManagement()" class="btn btn-primary" style="margin-top: 20px;">
-          Manage News & Patch Notes
+          📰 Manage News & Patch Notes
         </button>
       </div>
     </div>
@@ -630,7 +626,6 @@
       <div class="admin-tabs">
         <button class="admin-tab active" onclick="showAdminTab('create')">Create New Post</button>
         <button class="admin-tab" onclick="showAdminTab('drafts')">Drafts</button>
-        <button class="admin-tab" onclick="showAdminTab('scheduled')">Scheduled</button>
         <button class="admin-tab" onclick="showAdminTab('published')">Published</button>
       </div>
 
@@ -685,15 +680,8 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Schedule Date & Time (optional)</label>
-            <input type="datetime-local" class="form-input" id="scheduledDate">
-            <small style="color: #666; font-size: 12px;">Leave empty to save as draft. Posts are published anonymously with only date/time information.</small>
-          </div>
-
           <div style="display: flex; gap: 15px; margin-top: 30px;">
             <button type="button" class="btn btn-secondary" onclick="saveDraft()">Save as Draft</button>
-            <button type="button" class="btn btn-warning" onclick="schedulePost()">Schedule Post</button>
             <button type="button" class="btn btn-success" onclick="publishNow()">Publish Now</button>
           </div>
         </form>
@@ -704,14 +692,6 @@
         <h3>Draft Posts</h3>
         <div class="posts-grid" id="drafts-grid">
           <!-- Draft posts will be loaded here -->
-        </div>
-      </div>
-
-      <!-- Scheduled Tab -->
-      <div id="scheduled-tab" class="admin-tab-content">
-        <h3>Scheduled Posts</h3>
-        <div class="posts-grid" id="scheduled-grid">
-          <!-- Scheduled posts will be loaded here -->
         </div>
       </div>
 
@@ -735,7 +715,7 @@
             <div class="slide-content">
               <h3 class="slide-title" th:text="${news.title}">News Title</h3>
               <p class="slide-excerpt" th:text="${news.excerpt ?: #strings.substring(news.content, 0, 150) + '...'}">News excerpt...</p>
-              <span class="slide-date" th:text="${#temporals.format(news.publishedDate, 'MMMM dd, yyyy')}">Date</span>
+              <span class="slide-date" th:text="${news.formattedPublishedDate ?: 'Coming Soon'}">Date</span>
             </div>
           </div>
         </div>
@@ -743,7 +723,7 @@
         <!-- Fallback placeholder if no news -->
         <div th:if="${carouselNews == null or carouselNews.isEmpty()}" class="carousel-placeholder">
           <p>Welcome to Project Darkwater's news center!</p>
-          <p>Our PR team can create, schedule, and publish news articles and patch notes.</p>
+          <p>Our PR team can create and publish news articles and patch notes.</p>
           <p>All posts are managed with complete anonymity - only date and time information is displayed.</p>
         </div>
       </div>
@@ -768,14 +748,14 @@
           <div class="patch-content">
             <p th:text="${latestPatch.excerpt ?: #strings.substring(latestPatch.content, 0, 200) + '...'}">Patch content...</p>
           </div>
-          <div class="patch-date" th:text="'Release Date: ' + ${#temporals.format(latestPatch.publishedDate, 'MMMM dd, yyyy')}">Release Date: Coming Soon</div>
+          <div class="patch-date" th:text="'Release Date: ' + ${latestPatch.formattedPublishedDate}">Release Date: Coming Soon</div>
         </div>
 
         <!-- Fallback placeholder if no patch notes -->
         <div th:if="${latestPatch == null}" class="patch-placeholder">
           <span class="patch-version">v1.0.0</span>
           <div class="patch-content">
-            <p>Patch notes system is ready! Our PR team can create version-specific patch notes with scheduling capabilities. All posts maintain complete anonymity with only date and time information.</p>
+            <p>Patch notes system is ready! Our PR team can create version-specific patch notes. All posts maintain complete anonymity with only date and time information.</p>
           </div>
           <div class="patch-date">Release Date: Coming Soon</div>
         </div>
@@ -806,6 +786,8 @@
 <script>
   let currentSlide = 0;
   let editingPostId = null;
+
+  // CSRF is disabled in SecurityConfig, so no token needed
 
   // Carousel functionality
   const slides = document.querySelectorAll('.carousel-slide');
@@ -849,11 +831,20 @@
     });
 
     document.getElementById(tabName + '-tab').classList.add('active');
-    event.target.classList.add('active');
 
-    if (tabName === 'drafts') loadPosts('DRAFT');
-    if (tabName === 'scheduled') loadPosts('SCHEDULED');
-    if (tabName === 'published') loadPosts('PUBLISHED');
+    // Find and activate the correct tab button
+    const tabButtons = document.querySelectorAll('.admin-tab');
+    tabButtons.forEach(btn => {
+      if (btn.textContent.toLowerCase().includes(tabName)) {
+        btn.classList.add('active');
+      }
+    });
+
+    // Load posts after a small delay to ensure DOM is ready
+    setTimeout(() => {
+      if (tabName === 'drafts') loadPosts('DRAFT');
+      if (tabName === 'published') loadPosts('PUBLISHED');
+    }, 100);
   }
 
   // Show/hide patch-specific fields
@@ -883,26 +874,16 @@
     await savePost(postData);
   }
 
-  // Schedule post
-  async function schedulePost() {
-    const scheduledDate = document.getElementById('scheduledDate').value;
-    if (!scheduledDate) {
-      alert('Please select a date and time to schedule the post.');
-      return;
-    }
-
-    const postData = getFormData();
-    postData.scheduledDate = scheduledDate;
-    await savePost(postData);
-  }
-
   // Publish immediately
   async function publishNow() {
     const postData = getFormData();
     const response = await savePost(postData);
 
     if (response && response.id) {
-      await fetch(`/api/news/${response.id}/publish`, { method: 'POST' });
+      await fetch(`/api/news/${response.id}/publish`, {
+        method: 'POST',
+        credentials: 'same-origin'
+      });
       showAlert('Post published successfully!', 'success');
       clearForm();
       // Refresh page to show new content
@@ -920,12 +901,11 @@
       versionNumber: document.getElementById('versionNumber').value,
       isMajorRelease: document.getElementById('majorRelease').checked,
       featuredImage: document.getElementById('featuredImage').value,
-      tags: document.getElementById('tags').value,
-      scheduledDate: document.getElementById('scheduledDate').value || null
+      tags: document.getElementById('tags').value
     };
   }
 
-  // Save post
+  // Save post - UPDATED to auto-show drafts
   async function savePost(postData) {
     try {
       const url = editingPostId ? `/api/news/${editingPostId}` : '/api/news';
@@ -933,19 +913,34 @@
 
       const response = await fetch(url, {
         method: method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(postData)
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData),
+        credentials: 'same-origin'
       });
 
       if (response.ok) {
         const result = await response.json();
         showAlert('Post saved successfully!', 'success');
         clearForm();
+
+        // Only auto-switch to drafts for draft saves
+        if (postData.status === 'DRAFT') {
+          setTimeout(() => {
+            loadPosts('DRAFT');
+            showAdminTab('drafts');
+          }, 200);
+        }
+
         return result;
       } else {
-        showAlert('Error saving post. Please try again.', 'error');
+        const errorText = await response.text();
+        console.error('Save error:', response.status, errorText);
+        showAlert(`Error saving post: ${response.status} ${response.statusText}`, 'error');
       }
     } catch (error) {
+      console.error('Save error:', error);
       showAlert('Error saving post: ' + error.message, 'error');
     }
   }
@@ -953,9 +948,20 @@
   // Load posts by status
   async function loadPosts(status) {
     try {
-      const response = await fetch(`/api/news/admin/status/${status}?size=20`);
-      const data = await response.json();
-      displayPosts(data.content, status.toLowerCase());
+      const response = await fetch(`/api/news/admin/status/${status}?size=20`, {
+        credentials: 'same-origin'
+      });
+      if (response.ok) {
+        const data = await response.json();
+        // Map status to correct container suffix
+        const containerMap = {
+          'DRAFT': 'drafts',
+          'PUBLISHED': 'published'
+        };
+        displayPosts(data.content, containerMap[status]);
+      } else {
+        console.error('Load posts error:', response.status, response.statusText);
+      }
     } catch (error) {
       console.error('Error loading posts:', error);
     }
@@ -964,7 +970,19 @@
   // Display posts in grid
   function displayPosts(posts, containerSuffix) {
     const container = document.getElementById(containerSuffix + '-grid');
+
+    // Check if container exists
+    if (!container) {
+      console.error('Container not found:', containerSuffix + '-grid');
+      return;
+    }
+
     container.innerHTML = '';
+
+    if (posts.length === 0) {
+      container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">No ' + containerSuffix + ' posts found.</p>';
+      return;
+    }
 
     posts.forEach(post => {
       const postCard = createPostCard(post);
@@ -1001,7 +1019,9 @@
   // Edit post
   async function editPost(id) {
     try {
-      const response = await fetch(`/api/news/${id}`);
+      const response = await fetch(`/api/news/${id}`, {
+        credentials: 'same-origin'
+      });
       const post = await response.json();
 
       document.getElementById('title').value = post.title;
@@ -1012,11 +1032,6 @@
       document.getElementById('majorRelease').checked = post.isMajorRelease;
       document.getElementById('featuredImage').value = post.featuredImage || '';
       document.getElementById('tags').value = post.tags || '';
-
-      if (post.scheduledDate) {
-        const date = new Date(post.scheduledDate);
-        document.getElementById('scheduledDate').value = date.toISOString().slice(0, 16);
-      }
 
       if (post.type === 'PATCH_NOTES') {
         document.getElementById('patch-fields').style.display = 'grid';
@@ -1033,7 +1048,10 @@
   // Publish post
   async function publishPost(id) {
     try {
-      await fetch(`/api/news/${id}/publish`, { method: 'POST' });
+      await fetch(`/api/news/${id}/publish`, {
+        method: 'POST',
+        credentials: 'same-origin'
+      });
       showAlert('Post published successfully!', 'success');
       loadPosts('DRAFT');
       // Refresh page to show new content
@@ -1048,7 +1066,10 @@
     if (!confirm('Are you sure you want to delete this post?')) return;
 
     try {
-      await fetch(`/api/news/${id}`, { method: 'DELETE' });
+      await fetch(`/api/news/${id}`, {
+        method: 'DELETE',
+        credentials: 'same-origin'
+      });
       showAlert('Post deleted successfully!', 'success');
 
       // Refresh current tab
@@ -1056,7 +1077,6 @@
       if (activeTab) {
         const tabText = activeTab.textContent.toLowerCase();
         if (tabText.includes('draft')) loadPosts('DRAFT');
-        if (tabText.includes('scheduled')) loadPosts('SCHEDULED');
         if (tabText.includes('published')) loadPosts('PUBLISHED');
       }
     } catch (error) {

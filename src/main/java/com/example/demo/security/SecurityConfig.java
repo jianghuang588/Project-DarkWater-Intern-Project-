@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Configuration
 @EnableWebSecurity
@@ -36,6 +38,10 @@ public class SecurityConfig {
 
                 // FIXED: Use STATEFUL sessions for web pages, STATELESS for API
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+
+                // ADD THIS: Configure SecurityContext to persist in session
+                .securityContext(securityContext ->
+                        securityContext.requireExplicitSave(false))
 
                 // Who can access what
                 .authorizeHttpRequests(authz -> authz
@@ -81,6 +87,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/news/published/**").permitAll()          // Public published posts
                         .requestMatchers("/api/news/{id:[0-9]+}").permitAll()           // Public single post view
 
+                        // FIXED: Allow session-based authentication for admin APIs
                         // News API endpoints - Admin only for management
                         .requestMatchers("/api/news/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")  // Admin-only news management
                         .requestMatchers("/api/news").hasAnyRole("ADMIN", "SUPER_ADMIN")           // Create new posts
@@ -118,12 +125,26 @@ public class SecurityConfig {
         protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request,
                                         jakarta.servlet.http.HttpServletResponse response,
                                         jakarta.servlet.FilterChain filterChain) throws jakarta.servlet.ServletException, java.io.IOException {
-            // Only apply JWT authentication to API endpoints
             String path = request.getRequestURI();
-            if (path.startsWith("/api/")) {
-                super.doFilterInternal(request, response, filterChain);
+
+            // Skip JWT for admin news APIs (use session auth instead)
+            if (path.startsWith("/api/news") && !path.startsWith("/api/news/carousel") &&
+                    !path.startsWith("/api/news/latest-patch") && !path.startsWith("/api/news/published")) {
+                // Admin news APIs - use session authentication only
+                filterChain.doFilter(request, response);
+            } else if (path.startsWith("/api/")) {
+                // Check if user is already authenticated via session
+                Authentication existingAuth = SecurityContextHolder.getContext().getAuthentication();
+                if (existingAuth != null && existingAuth.isAuthenticated() &&
+                        !existingAuth.getName().equals("anonymousUser")) {
+                    // User is already authenticated via session, skip JWT processing
+                    filterChain.doFilter(request, response);
+                } else {
+                    // No session auth, try JWT
+                    super.doFilterInternal(request, response, filterChain);
+                }
             } else {
-                // For web pages, just continue without JWT processing
+                // Web pages - no JWT
                 filterChain.doFilter(request, response);
             }
         }

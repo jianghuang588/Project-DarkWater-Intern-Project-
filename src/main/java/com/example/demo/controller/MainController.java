@@ -12,6 +12,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +24,13 @@ import com.example.demo.dto.NewsPostDto;
 import com.example.demo.service.NewsService;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Main MVC controller for web pages
@@ -182,6 +193,20 @@ public class MainController {
 
                 isSupportStaff = (role == UserRole.SUPPORT_STAFF);
                 isModerator = (role == UserRole.MODERATOR);
+
+                // FIX: Set Spring Security authentication context
+                List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
+
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(username, null, authorities);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+
+                // DEBUG: Check if it was set correctly
+                Authentication setAuth = SecurityContextHolder.getContext().getAuthentication();
+                System.out.println("DEBUG: Set authentication: " + setAuth);
+                System.out.println("DEBUG: Authorities: " + setAuth.getAuthorities());
+
             } else {
                 System.out.println("DEBUG: User not found in database!");
             }
@@ -207,6 +232,9 @@ public class MainController {
 
         return "home";
     }
+
+
+
 
 
 
@@ -540,4 +568,8 @@ public class MainController {
             return "redirect:/profile?error=Could not load settings";
         }
     }
+
+
+
+
 }
