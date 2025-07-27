@@ -13,7 +13,55 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Header/Navigation */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px 0;
+            position: relative;
+            z-index: 100;
+            margin-bottom: 20px;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
         }
 
         body::before {
@@ -25,6 +73,7 @@
             height: 100%;
             background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
             pointer-events: none;
+            z-index: 1;
         }
 
         .container {
@@ -32,9 +81,10 @@
             margin: 0 auto;
             position: relative;
             z-index: 2;
+            padding: 20px;
         }
 
-        .header {
+        .page-header {
             background: rgba(255, 255, 255, 0.95);
             padding: 30px 40px;
             border-radius: 20px;
@@ -43,14 +93,14 @@
             backdrop-filter: blur(10px);
         }
 
-        .header h1 {
+        .page-header h1 {
             color: #333;
             font-size: 36px;
             font-weight: 600;
             margin-bottom: 10px;
         }
 
-        .header p {
+        .page-header p {
             color: #666;
             font-size: 16px;
         }
@@ -375,11 +425,15 @@
 
         /* Mobile responsive */
         @media (max-width: 768px) {
-            .header {
+            .nav-links {
+                display: none;
+            }
+
+            .page-header {
                 padding: 20px 25px;
             }
 
-            .header h1 {
+            .page-header h1 {
                 font-size: 28px;
             }
 
@@ -413,9 +467,22 @@
     </style>
 </head>
 <body>
+<!-- Header -->
+<div class="header">
+    <div class="nav-container">
+        <a href="/home" class="logo">Project Darkwater</a>
+        <ul class="nav-links">
+            <li><a href="/home">Home</a></li>
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/settings">Settings</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+</div>
+
 <div class="container">
-    <!-- Header -->
-    <div class="header">
+    <!-- Page Header -->
+    <div class="page-header">
         <h1>News & Patch Notes Management</h1>
         <p>Create, schedule, and manage news articles and patch notes for Project Darkwater</p>
     </div>
@@ -661,32 +728,5 @@
         loadTabData('drafts');
     });
 </script>
-
-<style>
-    /* Back to admin link */
-    .back-link {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        background: rgba(255, 255, 255, 0.9);
-        padding: 12px 20px;
-        border-radius: 25px;
-        text-decoration: none;
-        color: #667eea;
-        font-weight: 600;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(10px);
-        z-index: 1000;
-        transition: all 0.3s ease;
-    }
-
-    .back-link:hover {
-        background: white;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-</style>
-
-<a href="/admin" class="back-link">← Back to Admin</a>
 </body>
 </html>

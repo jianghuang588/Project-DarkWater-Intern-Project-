@@ -16,6 +16,56 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       color: #333;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Header/Navigation */
+    .top-header {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 20px 0;
+      position: relative;
+      z-index: 100;
+      margin-bottom: 20px;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+      text-decoration: none;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
     }
 
     .container {
@@ -215,55 +265,6 @@
       text-transform: uppercase;
     }
 
-    /* Navigation */
-    .navigation {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-top: 30px;
-    }
-
-    .nav-btn {
-      padding: 12px 30px;
-      border: none;
-      border-radius: 12px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      font-size: 16px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .nav-btn-primary {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      backdrop-filter: blur(10px);
-    }
-
-    .nav-btn-primary:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateY(-2px);
-      text-decoration: none;
-      color: white;
-    }
-
-    .nav-btn-secondary {
-      background: rgba(220, 53, 69, 0.8);
-      color: white;
-      border: 2px solid rgba(220, 53, 69, 0.3);
-      backdrop-filter: blur(10px);
-    }
-
-    .nav-btn-secondary:hover {
-      background: rgba(220, 53, 69, 1);
-      transform: translateY(-2px);
-      text-decoration: none;
-      color: white;
-    }
-
     /* Status Indicators */
     .status-indicator {
       position: relative;
@@ -290,6 +291,10 @@
 
     /* Responsive Design */
     @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
       .container {
         padding: 15px;
       }
@@ -309,16 +314,6 @@
 
       .actions-grid {
         grid-template-columns: 1fr;
-      }
-
-      .navigation {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .nav-btn {
-        width: 200px;
-        justify-content: center;
       }
     }
 
@@ -340,6 +335,19 @@
   </style>
 </head>
 <body>
+<!-- Top Navigation -->
+<div class="top-header">
+  <div class="nav-container">
+    <a href="/admin" class="logo">Project Darkwater</a>
+    <ul class="nav-links">
+      <li><a href="/home">Home</a></li>
+      <li><a href="/profile">Profile</a></li>
+      <li><a href="/settings">Settings</a></li>
+      <li><a href="/logout">Logout</a></li>
+    </ul>
+  </div>
+</div>
+
 <div class="container">
   <!-- Header -->
   <div class="header">
@@ -405,16 +413,6 @@
         <div class="action-description">Create and manage news articles and patch notes</div>
       </a>
     </div>
-  </div>
-
-  <!-- Navigation -->
-  <div class="navigation">
-    <a href="/home" class="nav-btn nav-btn-primary">
-      🏠 Back to Home
-    </a>
-    <a href="/logout" class="nav-btn nav-btn-secondary">
-      🚪 Logout
-    </a>
   </div>
 </div>
 
