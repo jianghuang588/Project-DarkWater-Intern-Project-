@@ -156,6 +156,7 @@
       text-decoration: none;
       color: inherit;
       display: block;
+      position: relative;
     }
 
     .action-card:hover {
@@ -164,6 +165,17 @@
       border-color: #667eea;
       text-decoration: none;
       color: inherit;
+    }
+
+    .action-card.coming-soon {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .action-card.coming-soon:hover {
+      transform: none;
+      border-color: transparent;
     }
 
     .action-icon {
@@ -188,6 +200,19 @@
       font-size: 14px;
       color: #666;
       line-height: 1.4;
+    }
+
+    .coming-soon-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ffc107;
+      color: #333;
+      padding: 4px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
     }
 
     /* Navigation */
@@ -353,23 +378,26 @@
   <div class="actions-section">
     <h2 class="section-title">🛠️ Admin Tools</h2>
     <div class="actions-grid">
-      <a href="/admin/users" class="action-card">
+      <div class="action-card coming-soon">
+        <span class="coming-soon-badge">Coming Soon</span>
         <span class="action-icon users-action">👤</span>
         <div class="action-title">Manage Users</div>
         <div class="action-description">View, edit, and manage user accounts and permissions</div>
-      </a>
+      </div>
 
-      <a href="/admin/roles" class="action-card">
+      <div class="action-card coming-soon">
+        <span class="coming-soon-badge">Coming Soon</span>
         <span class="action-icon roles-action">🔑</span>
         <div class="action-title">Manage Roles</div>
         <div class="action-description">Configure user roles and access levels</div>
-      </a>
+      </div>
 
-      <a href="/admin/logs" class="action-card">
+      <div class="action-card coming-soon">
+        <span class="coming-soon-badge">Coming Soon</span>
         <span class="action-icon logs-action">📊</span>
         <div class="action-title">Activity Logs</div>
         <div class="action-description">Monitor system activity and user actions</div>
-      </a>
+      </div>
 
       <a href="/admin/news" class="action-card">
         <span class="action-icon news-action">📰</span>
@@ -410,10 +438,18 @@
     });
   });
 
-  // Add click tracking for analytics
-  document.querySelectorAll('.action-card').forEach(card => {
+  // Add click tracking for analytics (only for working features)
+  document.querySelectorAll('.action-card:not(.coming-soon)').forEach(card => {
     card.addEventListener('click', function() {
       console.log('Admin action clicked:', this.querySelector('.action-title').textContent);
+    });
+  });
+
+  // Prevent clicks on coming soon items
+  document.querySelectorAll('.action-card.coming-soon').forEach(card => {
+    card.addEventListener('click', function(e) {
+      e.preventDefault();
+      console.log('Feature coming soon:', this.querySelector('.action-title').textContent);
     });
   });
 

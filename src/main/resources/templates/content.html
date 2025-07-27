@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Content</title>
+    <title>Content Hub</title>
     <style>
         * {
             margin: 0;
@@ -13,11 +13,8 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
         }
 
         body::before {
@@ -29,26 +26,180 @@
             height: 100%;
             background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
             pointer-events: none;
+            z-index: 1;
         }
 
-        .content-container {
+        /* Header/Navigation */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px 0;
+            position: relative;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Floating particles */
+        body::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                    radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.3), transparent),
+                    radial-gradient(2px 2px at 40% 70%, rgba(255,255,255,0.2), transparent),
+                    radial-gradient(1px 1px at 90% 20%, rgba(255,255,255,0.4), transparent),
+                    radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,0.3), transparent);
+            background-size: 200px 200px, 300px 300px, 150px 150px, 250px 250px;
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(-10px, -20px); }
+            50% { transform: translate(20px, -10px); }
+            75% { transform: translate(-20px, 10px); }
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .page-header h1 {
             background: rgba(255, 255, 255, 0.95);
-            padding: 50px;
+            padding: 40px 50px;
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(20px);
+            color: #333;
+            font-size: 42px;
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        .page-header h1::before {
+            content: '🎨';
+            display: block;
+            font-size: 56px;
+            margin-bottom: 15px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .page-header h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 100%;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            width: 100%;
-            backdrop-filter: blur(10px);
-            animation: slideUp 0.5s ease-out;
+            backdrop-filter: blur(20px);
             position: relative;
-            z-index: 1;
-            text-align: center;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: slideUp 0.6s ease-out both;
         }
+
+        .content-card:nth-child(1) { animation-delay: 0.1s; }
+        .content-card:nth-child(2) { animation-delay: 0.2s; }
+        .content-card:nth-child(3) { animation-delay: 0.3s; }
+        .content-card:nth-child(4) { animation-delay: 0.4s; }
 
         @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(50px);
             }
             to {
                 opacity: 1;
@@ -56,109 +207,113 @@
             }
         }
 
-        h2 {
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 36px;
-            font-weight: 600;
-            position: relative;
+        .content-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
         }
 
-        h2::before {
-            content: '📄';
-            display: block;
-            font-size: 64px;
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .content-card:hover::before {
+            left: 100%;
+        }
+
+        .card-icon {
+            font-size: 48px;
             margin-bottom: 20px;
+            display: block;
             animation: bounce 2s ease-in-out infinite;
         }
 
+        .card-icon:nth-child(1) { animation-delay: 0s; }
+        .card-icon:nth-child(2) { animation-delay: 0.5s; }
+        .card-icon:nth-child(3) { animation-delay: 1s; }
+        .card-icon:nth-child(4) { animation-delay: 1.5s; }
+
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-8px); }
         }
 
-        h2::after {
+        .card-title {
+            color: #333;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .card-title::after {
             content: '';
             position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 3px;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 2px;
+            transition: width 0.3s ease;
         }
 
-        p {
+        .content-card:hover .card-title::after {
+            width: 100%;
+        }
+
+        .card-description {
             color: #666;
-            font-size: 18px;
-            line-height: 1.8;
-            margin: 30px 0 40px;
-            padding: 30px;
-            background: #f8f8f8;
-            border-radius: 15px;
-            border-left: 4px solid;
-            border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .card-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .card-features li {
+            color: #555;
+            font-size: 14px;
+            padding: 8px 0;
             position: relative;
-            animation: fadeIn 0.5s ease-out 0.3s both;
+            padding-left: 25px;
+            transition: color 0.3s ease;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        p::before {
-            content: '💡';
+        .card-features li::before {
+            content: '✨';
             position: absolute;
-            top: -15px;
-            left: 20px;
-            font-size: 30px;
-            background: white;
-            padding: 0 10px;
+            left: 0;
+            font-size: 12px;
         }
 
-        a[href="/home"] {
+        .content-card:hover .card-features li {
+            color: #333;
+        }
+
+        .card-button {
             display: inline-block;
-            padding: 16px 40px;
-            margin-top: 20px;
+            padding: 12px 25px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border-radius: 12px;
             text-decoration: none;
-            font-size: 16px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
             position: relative;
             overflow: hidden;
-            animation: slideInUp 0.5s ease-out 0.5s both;
         }
 
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        a[href="/home"]::before {
-            content: '🏠 ';
-            font-size: 18px;
-            vertical-align: middle;
-        }
-
-        a[href="/home"]::after {
+        .card-button::before {
             content: '';
             position: absolute;
             top: 0;
@@ -166,68 +321,127 @@
             width: 100%;
             height: 100%;
             background: rgba(255, 255, 255, 0.2);
-            transition: left 0.5s ease;
+            transition: left 0.3s ease;
         }
 
-        a[href="/home"]:hover::after {
+        .card-button:hover::before {
             left: 100%;
         }
 
-        a[href="/home"]:hover {
+        .card-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        /* Decorative elements */
-        .content-container::before,
-        .content-container::after {
-            content: '';
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            opacity: 0.1;
-            pointer-events: none;
-        }
-
-        .content-container::before {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            top: -50px;
-            right: -50px;
-        }
-
-        .content-container::after {
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-            bottom: -50px;
-            left: -50px;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
 
         /* Mobile responsive */
         @media (max-width: 768px) {
-            .content-container {
-                padding: 40px 30px;
+            .main-container {
+                padding: 20px 10px;
             }
 
-            h2 {
-                font-size: 28px;
+            .page-header h1 {
+                font-size: 32px;
+                padding: 30px 40px;
             }
 
-            h2::before {
-                font-size: 48px;
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
             }
 
-            p {
-                font-size: 16px;
-                padding: 20px;
+            .content-card {
+                padding: 30px 25px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+
+        /* Dark mode detection */
+        @media (prefers-color-scheme: dark) {
+            .page-header h1,
+            .content-card {
+                background: rgba(255, 255, 255, 0.1);
+                color: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(20px);
+            }
+
+            .card-description,
+            .card-features li {
+                color: rgba(255, 255, 255, 0.7);
             }
         }
     </style>
 </head>
 <body>
-<div class="content-container">
-    <h2>Content Page</h2>
-    <p>This is some simple content.</p>
-    <a href="/home">Back to Home</a>
+<!-- Header -->
+<div class="header">
+    <div class="nav-container">
+        <a href="/home" class="logo">Project Darkwater</a>
+        <ul class="nav-links">
+            <li><a href="/home">Home</a></li>
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/settings">Settings</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="main-container">
+    <header class="page-header">
+        <h1>Content Hub</h1>
+    </header>
+
+    <div class="content-grid">
+        <div class="content-card">
+            <span class="card-icon">📝</span>
+            <h3 class="card-title">Articles & Blogs</h3>
+            <p class="card-description">Discover insightful articles, tutorials, and thought-provoking blog posts covering various topics.</p>
+            <ul class="card-features">
+                <li>Weekly fresh content</li>
+                <li>Expert insights</li>
+                <li>Interactive discussions</li>
+            </ul>
+            <a href="#" class="card-button">Coming Soon</a>
+        </div>
+
+        <div class="content-card">
+            <span class="card-icon">🎥</span>
+            <h3 class="card-title">Video Library</h3>
+            <p class="card-description">Access our curated collection of educational videos, tutorials, and creative content.</p>
+            <ul class="card-features">
+                <li>HD quality streaming</li>
+                <li>Offline downloads</li>
+                <li>Custom playlists</li>
+            </ul>
+            <a href="#" class="card-button">Coming Soon</a>
+        </div>
+
+        <div class="content-card">
+            <span class="card-icon">📚</span>
+            <h3 class="card-title">Resource Center</h3>
+            <p class="card-description">Find templates, guides, checklists, and other valuable resources for your projects.</p>
+            <ul class="card-features">
+                <li>Downloadable templates</li>
+                <li>Step-by-step guides</li>
+                <li>Regular updates</li>
+            </ul>
+            <a href="#" class="card-button">Coming Soon</a>
+        </div>
+
+        <div class="content-card">
+            <span class="card-icon">💡</span>
+            <h3 class="card-title">Ideas & Inspiration</h3>
+            <p class="card-description">Get inspired with creative ideas, case studies, and innovative solutions from industry leaders.</p>
+            <ul class="card-features">
+                <li>Real-world examples</li>
+                <li>Creative showcases</li>
+                <li>Innovation stories</li>
+            </ul>
+            <a href="#" class="card-button">Coming Soon</a>
+        </div>
+    </div>
 </div>
 </body>
 </html>

@@ -371,29 +371,6 @@
       line-height: 1.6;
     }
 
-    /* Back Button */
-    .back-button {
-      position: fixed;
-      top: 100px;
-      left: 20px;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 12px 20px;
-      border-radius: 25px;
-      text-decoration: none;
-      color: #667eea;
-      font-weight: 600;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(10px);
-      z-index: 1000;
-      transition: all 0.3s ease;
-    }
-
-    .back-button:hover {
-      background: white;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-
     /* Mobile Responsive */
     @media (max-width: 768px) {
       .page-title {
@@ -418,11 +395,6 @@
 
       .btn {
         width: 100%;
-      }
-
-      .back-button {
-        top: auto;
-        bottom: 20px;
       }
     }
   </style>
@@ -467,33 +439,31 @@
       </div>
       <p class="card-description">Manage your account information and preferences.</p>
 
-      <form action="/settings/account" method="post">
-        <div class="form-group">
-          <label class="form-label">Display Name</label>
-          <input type="text" class="form-input" name="displayName" th:value="${username}" placeholder="Your display name">
-        </div>
+      <div class="form-group">
+        <label class="form-label">Display Name</label>
+        <input type="text" class="form-input" name="displayName" th:value="${username}" placeholder="Your display name">
+      </div>
 
-        <div class="form-group">
-          <label class="form-label">Email Address</label>
-          <input type="email" class="form-input" name="email" th:value="${user?.email}" placeholder="your.email@gmail.com">
-        </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" name="email" th:value="${user?.email}" placeholder="your.email@gmail.com">
+      </div>
 
-        <div class="form-group">
-          <label class="form-label">Time Zone</label>
-          <select class="form-select" name="timezone">
-            <option value="EST">Eastern Time (EST)</option>
-            <option value="CST">Central Time (CST)</option>
-            <option value="MST">Mountain Time (MST)</option>
-            <option value="PST">Pacific Time (PST)</option>
-            <option value="GMT">Greenwich Mean Time (GMT)</option>
-          </select>
-        </div>
+      <div class="form-group">
+        <label class="form-label">Time Zone</label>
+        <select class="form-select" name="timezone">
+          <option value="EST">Eastern Time (EST)</option>
+          <option value="CST">Central Time (CST)</option>
+          <option value="MST">Mountain Time (MST)</option>
+          <option value="PST">Pacific Time (PST)</option>
+          <option value="GMT">Greenwich Mean Time (GMT)</option>
+        </select>
+      </div>
 
-        <div class="btn-group">
-          <button type="submit" class="btn btn-primary">Save Changes</button>
-          <a href="/profile/edit" class="btn btn-secondary">Edit Profile</a>
-        </div>
-      </form>
+      <div class="btn-group">
+        <button type="button" class="btn btn-primary" onclick="saveAccountSettings()">Save Changes</button>
+        <a href="#" class="btn btn-secondary">Edit Profile</a>
+      </div>
     </div>
 
     <!-- Notifications -->
@@ -586,7 +556,7 @@
       </div>
 
       <div class="btn-group">
-        <a href="/profile/change-password" class="btn btn-primary">Change Password</a>
+        <a href="#" class="btn btn-primary">Change Password</a>
         <button class="btn btn-secondary">Enable 2FA</button>
       </div>
     </div>
@@ -600,13 +570,13 @@
       <p class="card-description">Get help and access support resources.</p>
 
       <div class="btn-group">
-        <a href="/help" class="btn btn-primary">Help Center</a>
-        <a href="/faq" class="btn btn-secondary">FAQ</a>
+        <a href="#" class="btn btn-primary">Help Center</a>
+        <a href="#" class="btn btn-secondary">FAQ</a>
       </div>
 
       <div class="btn-group">
         <button class="btn btn-secondary">Report Issue</button>
-        <a href="/about" class="btn btn-secondary">About</a>
+        <a href="#" class="btn btn-secondary">About</a>
       </div>
     </div>
 
@@ -629,16 +599,37 @@
   </div>
 </div>
 
-<!-- Back Button -->
-<a href="/profile" class="back-button">← Back to Profile</a>
-
 <script>
   // Toggle switch functionality
   function toggleSwitch(element) {
     element.classList.toggle('active');
   }
 
-  // Form submission handling
+  // Save account settings function
+  function saveAccountSettings() {
+    const button = event.target;
+    const originalText = button.textContent;
+
+    // Show loading state
+    button.textContent = 'Saving...';
+    button.disabled = true;
+
+    // Simulate save operation
+    setTimeout(() => {
+      // Show success message
+      button.textContent = 'Saved!';
+      button.style.background = '#2ed573';
+
+      // Reset button after 2 seconds
+      setTimeout(() => {
+        button.textContent = originalText;
+        button.style.background = '';
+        button.disabled = false;
+      }, 2000);
+    }, 1000);
+  }
+
+  // Form submission handling for other forms
   document.querySelectorAll('form').forEach(form => {
     form.addEventListener('submit', function(e) {
       const submitBtn = form.querySelector('button[type="submit"]');

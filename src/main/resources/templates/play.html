@@ -454,29 +454,6 @@
       font-weight: 600;
     }
 
-    /* Back Button */
-    .back-button {
-      position: fixed;
-      top: 100px;
-      left: 20px;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 12px 20px;
-      border-radius: 25px;
-      text-decoration: none;
-      color: #667eea;
-      font-weight: 600;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(10px);
-      z-index: 1000;
-      transition: all 0.3s ease;
-    }
-
-    .back-button:hover {
-      background: white;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-
     /* Mobile Responsive */
     @media (max-width: 768px) {
       .hero-title {
@@ -506,11 +483,6 @@
 
       .nav-links {
         display: none;
-      }
-
-      .back-button {
-        top: auto;
-        bottom: 20px;
       }
     }
   </style>
@@ -762,9 +734,6 @@
     </div>
   </section>
 </div>
-
-<!-- Back Button -->
-<a href="/" class="back-button">← Back to Home</a>
 
 <script>
   // Platform download handler
