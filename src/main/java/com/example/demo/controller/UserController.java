@@ -26,6 +26,7 @@ public class UserController {
      * Get current user's profile information
      * @param authentication - Spring Security auth to identify current user
      * @return User details (username, email, role, created date, etc.)
+     * sdsa
      */
     @GetMapping("/profile")
     public ResponseEntity<UserResponseDto> getCurrentUser(Authentication authentication) {
