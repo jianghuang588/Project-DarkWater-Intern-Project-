@@ -1,13 +1,41 @@
+Security setting 
+![b](https://github.com/user-attachments/assets/6f94fc72-a5ec-4248-9d06-c2e84515d14c)
+
+![a](https://github.com/user-attachments/assets/4c50926a-9e7a-4038-8231-86f1f97ff428)
+
+user process 
+![c](https://github.com/user-attachments/assets/27b621bd-8b6a-4966-9e5c-c2d94b62a039)
+
+![d](https://github.com/user-attachments/assets/6b158638-1843-4932-a0b9-027ef62d6996)
+
+
+![e](https://github.com/user-attachments/assets/763fc036-5537-402a-ba0d-7f3440aeab1b)
+
+
+admin process
+![z](https://github.com/user-attachments/assets/40eed704-ac5a-41c5-9c18-81f23f88fd51)
+
+
+![f](https://github.com/user-attachments/assets/d8378da0-98f8-4253-9f09-3cd9fea2e0ef)
+
+![g](https://github.com/user-attachments/assets/b7fb282c-1466-4f2b-a88c-ae166235efee)
 
 
 
-![a](https://github.com/user-attachments/assets/935c022d-3f2a-4633-b013-359bca6d4a8e)
 
+instruction of how to set and run
+Use the URL below to start the application:
 
+http://localhost:8080/
 
-![b](https://github.com/user-attachments/assets/df7eb550-9b71-4e99-ac01-e0d5aa663a0b)
+---
 
+Change the MySQL database settings in the `application.properties` file based on your MySQL configuration.
 
-![c](https://github.com/user-attachments/assets/7ace8e2c-0083-49f8-9237-03a8ad10f271)
+For example:
 
-![d](https://github.com/user-attachments/assets/bae1c1ac-6d99-45a5-a1f8-0ad259875e46)
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/a
+spring.datasource.username=root
+spring.datasource.password=jh27085?
+
