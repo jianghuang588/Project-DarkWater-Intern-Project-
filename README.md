@@ -14,3 +14,7 @@ For example:
 spring.datasource.url=jdbc:mysql://localhost:3306/a
 spring.datasource.username=root
 spring.datasource.password=jh27085?
+
+
+security
+![a](https://github.com/user-attachments/assets/ff6ab28e-f10b-49e2-a000-c674f201e57e)
