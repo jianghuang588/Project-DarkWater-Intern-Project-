@@ -11,21 +11,103 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #0a0a0a;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             position: relative;
             overflow-x: hidden;
         }
 
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                    radial-gradient(circle at 20% 80%, rgba(74, 222, 128, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
+                    linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            pointer-events: none;
+            z-index: 1;
+            animation: backgroundPulse 8s ease-in-out infinite;
+        }
+
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Floating particles animation */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                    radial-gradient(2px 2px at 20px 30px, rgba(74, 222, 128, 0.3), transparent),
+                    radial-gradient(2px 2px at 40px 70px, rgba(34, 197, 94, 0.2), transparent),
+                    radial-gradient(1px 1px at 90px 40px, rgba(16, 185, 129, 0.4), transparent),
+                    radial-gradient(1px 1px at 130px 80px, rgba(74, 222, 128, 0.2), transparent),
+                    radial-gradient(2px 2px at 160px 30px, rgba(34, 197, 94, 0.3), transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: floatingParticles 20s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes floatingParticles {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+
+        /* Gaming-style neon glow effect */
+        @keyframes neonGlow {
+            0%, 100% {
+                text-shadow: 0 0 5px rgba(74, 222, 128, 0.5), 0 0 10px rgba(74, 222, 128, 0.3), 0 0 15px rgba(74, 222, 128, 0.2);
+            }
+            50% {
+                text-shadow: 0 0 10px rgba(74, 222, 128, 0.8), 0 0 20px rgba(74, 222, 128, 0.5), 0 0 30px rgba(74, 222, 128, 0.3);
+            }
+        }
+
+        /* Pulse animation for interactive elements */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+        }
+
         /* Header/Navigation */
         .header {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(25px);
+            border-bottom: 2px solid transparent;
+            border-image: linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.5), transparent) 1;
+            z-index: 1000;
+            animation: slideDown 0.8s ease-out;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 40px rgba(74, 222, 128, 0.1);
             padding: 20px 0;
-            position: relative;
-            z-index: 100;
-            margin-bottom: 20px;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .nav-container {
@@ -40,40 +122,57 @@
         .logo {
             font-size: 24px;
             font-weight: 700;
-            color: white;
+            color: #4ade80;
             text-decoration: none;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+            animation: neonGlow 3s ease-in-out infinite alternate;
         }
 
         .nav-links {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             list-style: none;
         }
 
         .nav-links a {
-            color: rgba(255, 255, 255, 0.9);
+            color: #ffffff;
             text-decoration: none;
-            font-weight: 500;
-            padding: 10px 20px;
-            border-radius: 20px;
-            transition: all 0.3s ease;
+            font-weight: 600;
+            padding: 14px 24px;
+            border-radius: 35px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.02), transparent);
+            transition: left 1s ease;
+            pointer-events: none;
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
         }
 
         .nav-links a:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
-            pointer-events: none;
-            z-index: 1;
+            background: rgba(74, 222, 128, 0.15);
+            border-color: rgba(74, 222, 128, 0.5);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(74, 222, 128, 0.3), 0 0 20px rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+            animation: pulse 2s infinite;
         }
 
         .container {
@@ -81,39 +180,63 @@
             margin: 0 auto;
             position: relative;
             z-index: 2;
-            padding: 20px;
+            padding: 120px 20px 40px;
         }
 
         .page-header {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-            backdrop-filter: blur(10px);
+            background: linear-gradient(145deg, rgba(20, 20, 20, 0.9) 0%, rgba(35, 35, 35, 0.9) 100%);
+            backdrop-filter: blur(25px);
+            border: 2px solid transparent;
+            border-image: linear-gradient(145deg, rgba(74, 222, 128, 0.3), rgba(74, 222, 128, 0.1), rgba(74, 222, 128, 0.3)) 1;
+            border-radius: 25px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 50px rgba(74, 222, 128, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.05), transparent);
+            animation: scanLine 3s linear infinite;
+        }
+
+        @keyframes scanLine {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
 
         .page-header h1 {
-            color: #333;
-            font-size: 36px;
-            font-weight: 600;
-            margin-bottom: 10px;
+            color: #4ade80;
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+            animation: neonGlow 3s ease-in-out infinite alternate;
         }
 
         .page-header p {
-            color: #666;
-            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 18px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .nav-tabs {
             display: flex;
             gap: 5px;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(10, 10, 10, 0.8);
             padding: 5px;
             border-radius: 15px;
             margin-bottom: 20px;
             backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(74, 222, 128, 0.2);
         }
 
         .tab-button {
@@ -126,22 +249,23 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            color: #666;
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .tab-button.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: #000000;
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.4);
         }
 
         .tab-content {
             display: none;
-            background: rgba(255, 255, 255, 0.95);
+            background: linear-gradient(145deg, rgba(20, 20, 20, 0.9) 0%, rgba(35, 35, 35, 0.9) 100%);
+            backdrop-filter: blur(25px);
+            border: 2px solid rgba(74, 222, 128, 0.2);
             border-radius: 20px;
             padding: 40px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
         }
 
         .tab-content.active {
@@ -154,50 +278,93 @@
             align-items: center;
             margin-bottom: 30px;
             padding-bottom: 20px;
-            border-bottom: 2px solid #f0f0f0;
+            border-bottom: 2px solid rgba(74, 222, 128, 0.2);
+        }
+
+        .action-bar h2 {
+            color: #4ade80;
+            font-size: 24px;
+            font-weight: 600;
+            text-shadow: 0 0 5px rgba(74, 222, 128, 0.3);
         }
 
         .btn {
             padding: 12px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: 15px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-decoration: none;
             display: inline-block;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.02), transparent);
+            transition: left 1s ease;
+            pointer-events: none;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
+            color: #000000;
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.4), 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 30px rgba(74, 222, 128, 0.6), 0 15px 40px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #5eeea5 0%, #34d573 50%, #22c55e 100%);
         }
 
         .btn-secondary {
-            background: #f8f8f8;
-            color: #333;
-            border: 2px solid #e0e0e0;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 2px solid rgba(74, 222, 128, 0.3);
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(74, 222, 128, 0.15);
+            border-color: rgba(74, 222, 128, 0.5);
+            color: #4ade80;
         }
 
         .btn-success {
-            background: #28a745;
-            color: white;
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: #000000;
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
         }
 
         .btn-warning {
-            background: #ffc107;
-            color: #333;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #1a1a1a;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
         }
 
         .btn-danger {
-            background: #dc3545;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: white;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
         }
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .btn-sm {
@@ -213,15 +380,28 @@
 
         .search-input {
             flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
+            padding: 18px 24px;
+            border: 2px solid rgba(74, 222, 128, 0.2);
+            border-radius: 15px;
+            font-size: 16px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(10, 10, 10, 0.8);
+            color: #ffffff;
+            backdrop-filter: blur(10px);
+            font-weight: 500;
         }
 
         .search-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #4ade80;
+            background: rgba(10, 10, 10, 0.95);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.3), 0 8px 25px rgba(0, 0, 0, 0.2);
+            animation: pulse 1.5s infinite;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
         }
 
         .posts-grid {
@@ -230,16 +410,19 @@
         }
 
         .post-card {
-            background: #f8f8f8;
-            border-radius: 12px;
-            padding: 24px;
-            border: 2px solid #e0e0e0;
-            transition: all 0.3s ease;
+            background: linear-gradient(145deg, rgba(10, 10, 10, 0.8) 0%, rgba(25, 25, 25, 0.8) 100%);
+            border: 2px solid rgba(74, 222, 128, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4), 0 0 20px rgba(74, 222, 128, 0.1);
         }
 
         .post-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+            border-color: rgba(74, 222, 128, 0.5);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(74, 222, 128, 0.2);
         }
 
         .post-header {
@@ -252,8 +435,9 @@
         .post-title {
             font-size: 20px;
             font-weight: 600;
-            color: #333;
+            color: #4ade80;
             margin-bottom: 5px;
+            text-shadow: 0 0 5px rgba(74, 222, 128, 0.3);
         }
 
         .post-meta {
@@ -264,38 +448,39 @@
 
         .meta-item {
             font-size: 12px;
-            padding: 4px 10px;
+            padding: 6px 12px;
             border-radius: 20px;
             font-weight: 600;
+            text-transform: uppercase;
         }
 
         .meta-type {
-            background: #e3f2fd;
-            color: #1976d2;
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
         }
 
         .meta-status {
-            background: #f3e5f5;
-            color: #7b1fa2;
+            background: rgba(168, 85, 247, 0.2);
+            color: #a855f7;
         }
 
         .meta-status.published {
-            background: #e8f5e8;
-            color: #2e7d32;
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
         }
 
         .meta-status.scheduled {
-            background: #fff3e0;
-            color: #f57c00;
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
         }
 
         .meta-status.draft {
-            background: #fafafa;
-            color: #616161;
+            background: rgba(107, 114, 128, 0.2);
+            color: #9ca3af;
         }
 
         .post-excerpt {
-            color: #666;
+            color: rgba(255, 255, 255, 0.7);
             font-size: 14px;
             line-height: 1.5;
             margin-bottom: 15px;
@@ -314,7 +499,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.8);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -325,13 +510,16 @@
         }
 
         .modal-content {
-            background: white;
+            background: linear-gradient(145deg, rgba(20, 20, 20, 0.95) 0%, rgba(35, 35, 35, 0.95) 100%);
+            border: 2px solid rgba(74, 222, 128, 0.3);
             border-radius: 15px;
             padding: 30px;
             max-width: 600px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
         }
 
         .modal-header {
@@ -340,13 +528,14 @@
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
+            border-bottom: 2px solid rgba(74, 222, 128, 0.2);
         }
 
         .modal-title {
             font-size: 24px;
             font-weight: 600;
-            color: #333;
+            color: #4ade80;
+            text-shadow: 0 0 5px rgba(74, 222, 128, 0.3);
         }
 
         .close-btn {
@@ -354,7 +543,12 @@
             border: none;
             font-size: 24px;
             cursor: pointer;
-            color: #666;
+            color: rgba(255, 255, 255, 0.7);
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #4ade80;
         }
 
         .form-group {
@@ -365,20 +559,34 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #333;
+            color: #4ade80;
+            text-shadow: 0 0 5px rgba(74, 222, 128, 0.3);
         }
 
         .form-input {
             width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
+            padding: 18px 24px;
+            border: 2px solid rgba(74, 222, 128, 0.2);
+            border-radius: 15px;
+            font-size: 16px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(10, 10, 10, 0.8);
+            color: #ffffff;
+            backdrop-filter: blur(10px);
+            font-weight: 500;
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #4ade80;
+            background: rgba(10, 10, 10, 0.95);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.3), 0 8px 25px rgba(0, 0, 0, 0.2);
+            animation: pulse 1.5s infinite;
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
         }
 
         .form-textarea {
@@ -388,11 +596,14 @@
 
         .form-select {
             width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            background: white;
+            padding: 18px 24px;
+            border: 2px solid rgba(74, 222, 128, 0.2);
+            border-radius: 15px;
+            font-size: 16px;
+            background: rgba(10, 10, 10, 0.8);
+            color: #ffffff;
+            backdrop-filter: blur(10px);
+            font-weight: 500;
         }
 
         .form-checkbox {
@@ -414,13 +625,104 @@
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #666;
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .empty-state-icon {
             font-size: 48px;
             margin-bottom: 20px;
             opacity: 0.5;
+            filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.3));
+        }
+
+        .empty-state h3 {
+            color: #4ade80;
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px rgba(74, 222, 128, 0.3);
+        }
+
+        /* Footer with gaming style and animations */
+        .footer {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            color: rgba(255, 255, 255, 0.9);
+            padding: 60px 20px 40px;
+            position: relative;
+            overflow: hidden;
+            margin-top: auto;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+            border-top: 2px solid transparent;
+            border-image: linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.3), transparent) 1;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.8), transparent);
+            animation: pulse 3s infinite;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .footer-button {
+            background: transparent;
+            color: #ffffff;
+            padding: 18px 45px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid rgba(74, 222, 128, 0.3);
+            backdrop-filter: blur(15px);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(74, 222, 128, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .footer-button:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .footer-button:hover {
+            background: rgba(74, 222, 128, 0.1);
+            border-color: rgba(74, 222, 128, 0.8);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(74, 222, 128, 0.3);
+            color: #4ade80;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
         }
 
         /* Mobile responsive */
@@ -429,16 +731,20 @@
                 display: none;
             }
 
+            .container {
+                padding: 100px 15px 40px;
+            }
+
             .page-header {
-                padding: 20px 25px;
+                padding: 30px 25px;
             }
 
             .page-header h1 {
-                font-size: 28px;
+                font-size: 36px;
             }
 
             .tab-content {
-                padding: 25px 20px;
+                padding: 30px 25px;
             }
 
             .action-bar {
@@ -463,6 +769,16 @@
             .date-time-group {
                 grid-template-columns: 1fr;
             }
+
+            .footer-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .footer-button {
+                width: 250px;
+            }
         }
     </style>
 </head>
@@ -472,8 +788,8 @@
     <div class="nav-container">
         <a href="/home" class="logo">Project Darkwater</a>
         <ul class="nav-links">
-            <li><a href="/home">Home</a></li>
             <li><a href="/profile">Profile</a></li>
+            <li><a href="/admin">Admin</a></li>
             <li><a href="/settings">Settings</a></li>
             <li><a href="/logout">Logout</a></li>
         </ul>
@@ -483,7 +799,7 @@
 <div class="container">
     <!-- Page Header -->
     <div class="page-header">
-        <h1>News & Patch Notes Management</h1>
+        <h1>📰 News & Patch Notes Management</h1>
         <p>Create, schedule, and manage news articles and patch notes for Project Darkwater</p>
     </div>
 
@@ -553,7 +869,7 @@
 
     <!-- Create New Tab -->
     <div class="tab-content" id="create-tab">
-        <h2>Create New Post</h2>
+        <h2 style="color: #4ade80; margin-bottom: 30px; text-shadow: 0 0 5px rgba(74, 222, 128, 0.3);">Create New Post</h2>
         <form id="create-form">
             <div class="form-group">
                 <label class="form-label">Post Type</label>
@@ -638,6 +954,18 @@
                 <button type="button" class="btn btn-primary" onclick="saveEdit()">Save Changes</button>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    <div class="footer-container">
+        <div class="footer-buttons">
+            <a href="/about" class="footer-button">ABOUT US</a>
+            <a href="mailto:operations@projectdarkwater.com" class="footer-button">CONTACT US</a>
+            <a href="/apply" class="footer-button">APPLY</a>
+            <a href="/login" class="footer-button">LOGIN</a>
+        </div>
     </div>
 </div>
 

@@ -11,11 +11,13 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #0a0a0a;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+            overflow-x: hidden;
             padding: 20px;
         }
 
@@ -26,17 +28,74 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            background:
+                    radial-gradient(circle at 20% 80%, rgba(74, 222, 128, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
+                    linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
             pointer-events: none;
+            z-index: 1;
+            animation: backgroundPulse 8s ease-in-out infinite;
         }
 
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Floating particles animation */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                    radial-gradient(2px 2px at 20px 30px, rgba(74, 222, 128, 0.3), transparent),
+                    radial-gradient(2px 2px at 40px 70px, rgba(34, 197, 94, 0.2), transparent),
+                    radial-gradient(1px 1px at 90px 40px, rgba(16, 185, 129, 0.4), transparent),
+                    radial-gradient(1px 1px at 130px 80px, rgba(74, 222, 128, 0.2), transparent),
+                    radial-gradient(2px 2px at 160px 30px, rgba(34, 197, 94, 0.3), transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: floatingParticles 20s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes floatingParticles {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+
+        /* Gaming-style neon glow effect */
+        @keyframes neonGlow {
+            0%, 100% {
+                text-shadow: 0 0 5px rgba(74, 222, 128, 0.5), 0 0 10px rgba(74, 222, 128, 0.3), 0 0 15px rgba(74, 222, 128, 0.2);
+            }
+            50% {
+                text-shadow: 0 0 10px rgba(74, 222, 128, 0.8), 0 0 20px rgba(74, 222, 128, 0.5), 0 0 30px rgba(74, 222, 128, 0.3);
+            }
+        }
+
+        /* Pulse animation for interactive elements */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+        }
+
+        /* Gaming-style register form */
         h2 {
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 32px;
-            font-weight: 600;
+            color: #4ade80;
+            margin-bottom: 35px;
+            font-size: 36px;
+            font-weight: 700;
             text-align: center;
             position: relative;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+            animation: neonGlow 3s ease-in-out infinite alternate;
         }
 
         h2::after {
@@ -47,143 +106,68 @@
             transform: translateX(-50%);
             width: 50px;
             height: 3px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
             border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.4);
         }
 
         form {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            background:
+                    linear-gradient(145deg, rgba(20, 20, 20, 0.9) 0%, rgba(35, 35, 35, 0.9) 100%);
+            backdrop-filter: blur(25px);
+            border: 2px solid transparent;
+            border-image: linear-gradient(145deg, rgba(74, 222, 128, 0.3), rgba(74, 222, 128, 0.1), rgba(74, 222, 128, 0.3)) 1;
+            padding: 50px 45px;
+            border-radius: 25px;
+            box-shadow:
+                    0 25px 50px rgba(0, 0, 0, 0.6),
+                    0 0 50px rgba(74, 222, 128, 0.1),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
             width: 100%;
-            max-width: 400px;
-            backdrop-filter: blur(10px);
-            animation: slideUp 0.5s ease-out;
+            max-width: 450px;
+            animation: slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
-            z-index: 1;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        form::before {
-            content: 'Create Your Account';
-            display: block;
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 15px 20px;
-            margin-top: 8px;
-            border: 2px solid #e1e1e1;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: #f8f8f8;
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="password"]:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
-        }
-
-        input[type="text"]::placeholder,
-        input[type="email"]::placeholder,
-        input[type="password"]::placeholder {
-            color: #999;
-            font-size: 14px;
-        }
-
-        button[type="submit"] {
-            width: 100%;
-            padding: 16px;
-            margin-top: 25px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            position: relative;
+            z-index: 10;
             overflow: hidden;
         }
 
-        button[type="submit"]::before {
+        form::before {
+            content: '🎮 Join the Adventure! ';
+            display: block;
+            color: rgba(74, 222, 128, 0.9);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+            animation: neonGlow 2s ease-in-out infinite alternate;
+        }
+
+        form::after {
             content: '';
             position: absolute;
             top: 0;
             left: -100%;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: left 0.5s ease;
+            background: linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.05), transparent);
+            animation: scanLine 3s linear infinite;
         }
 
-        button[type="submit"]:hover::before {
-            left: 100%;
+        @keyframes scanLine {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
 
-        button[type="submit"]:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-        }
-
-        button[type="submit"]:active {
-            transform: translateY(0);
-        }
-
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            color: #667eea;
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        a::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #667eea;
-            transition: width 0.3s ease;
-        }
-
-        a:hover {
-            color: #764ba2;
-        }
-
-        a:hover::after {
-            width: 100%;
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         /* Custom styled alert */
@@ -193,11 +177,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.7);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 2000;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
@@ -209,10 +193,12 @@
         }
 
         .alert-box {
-            background: white;
+            background: rgba(35, 35, 35, 0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             max-width: 400px;
             width: 90%;
             transform: scale(0.8);
@@ -228,25 +214,26 @@
             width: 60px;
             height: 60px;
             margin: 0 auto 15px;
-            background: #fee;
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid #ef4444;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 30px;
-            color: #e74c3c;
+            color: #ff6b6b;
         }
 
         .alert-message {
-            color: #333;
+            color: #ffffff;
             font-size: 16px;
             margin-bottom: 20px;
             font-weight: 500;
         }
 
         .alert-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: #1a1a1a;
             border: none;
             padding: 12px 30px;
             border-radius: 8px;
@@ -258,7 +245,192 @@
 
         .alert-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 5px 15px rgba(34, 197, 94, 0.4);
+        }
+
+        /* Gaming-style input fields */
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 18px 24px;
+            margin-top: 8px;
+            border: 2px solid rgba(74, 222, 128, 0.2);
+            border-radius: 15px;
+            font-size: 16px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(10, 10, 10, 0.8);
+            color: #ffffff;
+            backdrop-filter: blur(10px);
+            position: relative;
+            font-weight: 500;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #4ade80;
+            background: rgba(10, 10, 10, 0.95);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow:
+                    0 0 20px rgba(74, 222, 128, 0.3),
+                    0 8px 25px rgba(0, 0, 0, 0.2),
+                    inset 0 1px 0 rgba(74, 222, 128, 0.2);
+            animation: pulse 1.5s infinite;
+        }
+
+        input[type="text"]::placeholder,
+        input[type="email"]::placeholder,
+        input[type="password"]::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 400;
+        }
+
+        /* Epic register button */
+        button[type="submit"] {
+            width: 100%;
+            padding: 20px;
+            margin-top: 35px;
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
+            color: #000000;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            box-shadow:
+                    0 0 20px rgba(74, 222, 128, 0.4),
+                    0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        button[type="submit"]::before {
+            content: '⚡';
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        button[type="submit"]::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        button[type="submit"]:hover::after {
+            left: 100%;
+        }
+
+        button[type="submit"]:hover::before {
+            opacity: 1;
+            left: 25px;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow:
+                    0 0 30px rgba(74, 222, 128, 0.6),
+                    0 15px 40px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #5eeea5 0%, #34d573 50%, #22c55e 100%);
+            padding-left: 50px;
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        /* Gaming-style links */
+        a {
+            display: inline-block;
+            margin-top: 25px;
+            color: #4ade80;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #4ade80, #22c55e);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
+        }
+
+        a::before {
+            content: '🔗';
+            position: absolute;
+            left: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        a:hover::before {
+            opacity: 1;
+            left: -20px;
+        }
+
+        a:hover {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+            transform: translateX(15px);
+        }
+
+        a:hover::after {
+            width: 100%;
+        }
+
+        /* Gaming labels */
+        label {
+            display: block;
+            color: #4ade80;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 8px;
+            text-shadow: 0 0 5px rgba(74, 222, 128, 0.3);
+            position: relative;
+        }
+
+        label.username::before {
+            content: '👤 ';
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        label.email::before {
+            content: '📧 ';
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        label.password::before {
+            content: '🔒 ';
+            margin-right: 8px;
+            font-size: 16px;
         }
 
         /* Responsive design */
@@ -282,10 +454,18 @@
 <form action="/register" method="post">
     <h2>Register</h2>
 
-    Username: <input type="text" name="username" placeholder="john123" required><br><br>
-    Email: <input type="email" name="email" placeholder="your@gmail.com" required><br><br>
-    Password: <input type="password" name="password" placeholder="••••••••" required><br><br>
-    Confirm Password: <input type="password" name="confirmPassword" placeholder="••••••••" required><br><br>
+    <label class="username">Username:</label>
+    <input type="text" name="username" placeholder="john123" required><br><br>
+
+    <label class="email">Email:</label>
+    <input type="email" name="email" placeholder="your@gmail.com" required><br><br>
+
+    <label class="password">Password:</label>
+    <input type="password" name="password" placeholder="••••••••" required><br><br>
+
+    <label class="password">Confirm Password:</label>
+    <input type="password" name="confirmPassword" placeholder="••••••••" required><br><br>
+
     <button type="submit">Register</button>
 
     <br>
