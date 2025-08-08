@@ -2,7 +2,7 @@
 
 A comprehensive platform designed for game developers to share information, collaborate on projects, and build community connections. Built with **Java Spring Boot**, featuring user authentication, project showcases, news updates, and community features.
 
-## 🎬 Demo Videos
+## 🎬 Demo Videos(gif file may take 1-2 minute to load due to the size)
 
 **User Journey:** Landing & Registration → Authentication → Main Platform → Content & Community → Admin Tools
 
