@@ -6,6 +6,9 @@ A comprehensive platform designed for game developers to share information, coll
 
 **User Journey:** Landing & Registration → Authentication → Main Platform → Content & Community → Admin Tools
 
+**(gif file may take 1-2 minute to load due to the size)**
+
+
 <details>
 <summary>▶️ <b>1. Landing Page & Registration</b></summary>
 Welcome screen with game information, character/game art, and call-to-action for sign-up.
